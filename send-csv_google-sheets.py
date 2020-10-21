@@ -1,17 +1,16 @@
 from __future__ import print_function
 import pickle
+import gspread
 import os.path
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 
 # If modifying these scopes, delete the file token.pickle.
-SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
+SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 
 # The ID and range of a sample spreadsheet.
-#1khGGqTWtQiZWKdYbLDTBXk1dti3YxO0-uMyT4JFpoig
-SAMPLE_SPREADSHEET_ID = '1MlvFP0t9QS_5DHF1xBhXcldJby3DAvUHZQH-EC1GRYU'
-SAMPLE_RANGE_NAME = 'Class Data!A2:E'
+SPREADSHEET_ID = '1MlvFP0t9QS_5DHF1xBhXcldJby3DAvUHZQH-EC1GRYU'
 
 def main():
     """Shows basic usage of the Sheets API.
@@ -38,19 +37,12 @@ def main():
 
     service = build('sheets', 'v4', credentials=creds)
 
-    # Call the Sheets API
-    sheet = service.spreadsheets()
-    result = sheet.values().get(spreadsheetId=SAMPLE_SPREADSHEET_ID,
-                                range=SAMPLE_RANGE_NAME).execute()
-    values = result.get('values', [])
+    gc = gspread.authorize(creds)
 
-    if not values:
-        print('No data found.')
-    else:
-        print('Name, Major:')
-        for row in values:
-            # Print columns A and E, which correspond to indices 0 and 4.
-            print('%s, %s' % (row[0], row[4]))
+    # Read CSV file contents
+    content = open('raw-csv-data.csv', 'r').read()
+
+    gc.import_csv(SPREADSHEET_ID, content)
 
 if __name__ == '__main__':
     main()
