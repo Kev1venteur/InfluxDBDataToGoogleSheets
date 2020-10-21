@@ -42,4 +42,4 @@ Just send a pull-request 😉
 
 ## Sources
 InfluxDB API : https://docs.influxdata.com/influxdb/v1.8/guides/write_data/ </br>
-Google SpreadSheets API : https://developers.google.com/sheets/api/quickstart/python </br>
+Google Sheets API : https://developers.google.com/sheets/api/quickstart/python </br>
