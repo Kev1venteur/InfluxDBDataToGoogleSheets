@@ -10,7 +10,7 @@ Just install python and execute [The bash script](grafana-data_exporter.sh). </b
 Don't forget to change the fields that needs to be modified in the scripts. </br>
 Install the Google Client Library :
 ``` sh
-pip install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib
+pip install --trusted-host pypi.org --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib
 ```
 </br>
 Turn on the Google Sheets API from this page : https://developers.google.com/sheets/api/quickstart/python </br>
