@@ -10,7 +10,7 @@ from google.auth.transport.requests import Request
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets',
           'https://www.googleapis.com/auth/drive']
 
-# The ID and range of a sample spreadsheet.
+# The infos of a spreadsheet.
 SPREADSHEET_ID = '1MlvFP0t9QS_5DHF1xBhXcldJby3DAvUHZQH-EC1GRYU'
 worksheet_name = 'test'
 csv_path = 'formatted-csv-data.csv'
