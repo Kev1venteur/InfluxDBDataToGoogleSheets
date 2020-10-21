@@ -6,6 +6,7 @@ from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 
+
 # Delete tocken.pickles file every time you change the scopes
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets',
           'https://www.googleapis.com/auth/drive']
@@ -58,7 +59,13 @@ def main():
 
     def push_csv_to_gsheet(csv_path, sheet_id):
         #Get last filled row to insert after it
-        rows = service.spreadsheets().values().get(spreadsheetId=SPREADSHEET_ID, range=range).execute().get('values', [])
+        rows = service \
+            .spreadsheets() \
+            .values() \
+            .get(spreadsheetId=SPREADSHEET_ID, range=range) \
+            .execute() \
+            .get('values', [])
+
         last_row = rows[-1] if rows else None
         last_row_id = len(rows) + 1
 
@@ -78,7 +85,10 @@ def main():
                 }
             }]
         }
-        request = API.spreadsheets().batchUpdate(spreadsheetId=SPREADSHEET_ID, body=body)
+        request = API \
+            .spreadsheets() \
+            .batchUpdate(spreadsheetId=SPREADSHEET_ID, body=body)
+
         request.InsertDataOption = "INSERT_ROWS"
         response = request.execute()
         return response
