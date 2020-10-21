@@ -13,7 +13,7 @@ SCOPES = ['https://www.googleapis.com/auth/spreadsheets',
 # The ID and range of a sample spreadsheet.
 SPREADSHEET_ID = '1MlvFP0t9QS_5DHF1xBhXcldJby3DAvUHZQH-EC1GRYU'
 worksheet_name = 'test'
-csv_path = 'raw-csv-data.csv'
+csv_path = 'formatted-csv-data.csv'
 creds_path = 'token.pickle'
 range = "test!A2:D"
 
@@ -60,7 +60,7 @@ def main():
         #Get last filled row to insert after it
         rows = service.spreadsheets().values().get(spreadsheetId=SPREADSHEET_ID, range=range).execute().get('values', [])
         last_row = rows[-1] if rows else None
-        last_row_id = len(rows)
+        last_row_id = len(rows) + 1
 
         with open(csv_path, 'r') as csv_file:
             csvContents = csv_file.read()
