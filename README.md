@@ -2,11 +2,12 @@
 This project goal is to automate enterprise reporting, by formatting InfluxDB data into google spreadsheet, to be used with datastudio
 ## How to Start
 ```
-git clone https://github.com/Kev1venteur/demineurFrontend.git
+git clone https://github.com/Kev1venteur/InfluxDBDataToGoogleSheets.git
 ```
 
 ## How to Launch
-Just install python and execute [The bash script](grafana-data_exporter.sh)
+Just install python and execute [The bash script](grafana-data_exporter.sh).
+Don't forget to change the fields that needs to be modified in the scripts.
 
 ## Examples
 Environment: Using InfluxDB Docker container
@@ -29,8 +30,8 @@ curl -G 'http://localhost:8086/query?pretty=true' --data-urlencode "db=mydb" --d
 ## How to contribute
 Just send a pull-request 😉
 
-## Auteur
-- <b>Kévin Gillet</b> - <i>Developpeur</i> - <a href="https://www.linkedin.com/in/k%C3%A9vin-gillet-50b25b175/">Linkedin</a>.
+## Author
+- <b>Kévin Gillet</b> - <i>Developper</i> - <a href="https://www.linkedin.com/in/k%C3%A9vin-gillet-50b25b175/">Linkedin</a>.
 
 ## Sources
 InfluxDB API : https://docs.influxdata.com/influxdb/v1.8/guides/write_data/
