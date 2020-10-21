@@ -43,6 +43,7 @@ def main():
     # Read CSV file contents
     content = open('raw-csv-data.csv', 'r').read()
 
+    #This method removes all other worksheets and then entirely replaces the contents of the first worksheet.
     gc.import_csv(SPREADSHEET_ID, content)
 
 if __name__ == '__main__':
