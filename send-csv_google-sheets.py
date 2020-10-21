@@ -15,6 +15,7 @@ SPREADSHEET_ID = '1MlvFP0t9QS_5DHF1xBhXcldJby3DAvUHZQH-EC1GRYU'
 worksheet_name = 'test'
 csv_path = 'raw-csv-data.csv'
 creds_path = 'token.pickle'
+range = "test!A2:D"
 
 def main():
     """Shows basic usage of the Sheets API.
@@ -55,8 +56,12 @@ def main():
                 if sheet['properties']['title'] == sheet_name:
                     return sheet['properties']['sheetId']
 
-
     def push_csv_to_gsheet(csv_path, sheet_id):
+        #Get last filled row to insert after it
+        rows = service.spreadsheets().values().get(spreadsheetId=SPREADSHEET_ID, range=range).execute().get('values', [])
+        last_row = rows[-1] if rows else None
+        last_row_id = len(rows)
+
         with open(csv_path, 'r') as csv_file:
             csvContents = csv_file.read()
         body = {
@@ -64,7 +69,7 @@ def main():
                 'pasteData': {
                     "coordinate": {
                         "sheetId": sheet_id,
-                        "rowIndex": "0",  # adapt this if you need different positioning
+                        "rowIndex": last_row_id,  # adapt this if you need different positioning
                         "columnIndex": "0", # adapt this if you need different positioning
                     },
                     "data": csvContents,
@@ -74,6 +79,7 @@ def main():
             }]
         }
         request = API.spreadsheets().batchUpdate(spreadsheetId=SPREADSHEET_ID, body=body)
+        request.InsertDataOption = "INSERT_ROWS"
         response = request.execute()
         return response
 
