@@ -12,6 +12,9 @@ SCOPES = ['https://www.googleapis.com/auth/spreadsheets',
 
 # The ID and range of a sample spreadsheet.
 SPREADSHEET_ID = '1MlvFP0t9QS_5DHF1xBhXcldJby3DAvUHZQH-EC1GRYU'
+worksheet_name = 'test'
+csv_path = 'raw-csv-data.csv'
+creds_path = 'token.pickle'
 
 def main():
     """Shows basic usage of the Sheets API.
@@ -38,13 +41,53 @@ def main():
 
     service = build('sheets', 'v4', credentials=creds)
 
-    gc = gspread.authorize(creds)
+    # convenience routines
+    def find_sheet_id_by_name(sheet_name):
+        # ugly, but works
+        sheets_with_properties = API \
+            .spreadsheets() \
+            .get(spreadsheetId=SPREADSHEET_ID, fields='sheets.properties') \
+            .execute() \
+            .get('sheets')
 
-    # Read CSV file contents
-    content = open('raw-csv-data.csv', 'r').read()
+        for sheet in sheets_with_properties:
+            if 'title' in sheet['properties'].keys():
+                if sheet['properties']['title'] == sheet_name:
+                    return sheet['properties']['sheetId']
 
-    #This method removes all other worksheets and then entirely replaces the contents of the first worksheet.
-    gc.import_csv(SPREADSHEET_ID, content)
+
+    def push_csv_to_gsheet(csv_path, sheet_id):
+        with open(csv_path, 'r') as csv_file:
+            csvContents = csv_file.read()
+        body = {
+            'requests': [{
+                'pasteData': {
+                    "coordinate": {
+                        "sheetId": sheet_id,
+                        "rowIndex": "0",  # adapt this if you need different positioning
+                        "columnIndex": "0", # adapt this if you need different positioning
+                    },
+                    "data": csvContents,
+                    "type": 'PASTE_NORMAL',
+                    "delimiter": ',',
+                }
+            }]
+        }
+        request = API.spreadsheets().batchUpdate(spreadsheetId=SPREADSHEET_ID, body=body)
+        response = request.execute()
+        return response
+
+
+    # upload
+    with open(creds_path, 'rb') as token:
+        credentials = pickle.load(token)
+
+    API = build('sheets', 'v4', credentials=credentials)
+
+    push_csv_to_gsheet(
+        csv_path=csv_path,
+        sheet_id=find_sheet_id_by_name(worksheet_name)
+    )
 
 if __name__ == '__main__':
     main()
