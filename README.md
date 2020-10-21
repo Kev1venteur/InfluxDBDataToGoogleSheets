@@ -6,9 +6,15 @@ git clone https://github.com/Kev1venteur/InfluxDBDataToGoogleSheets.git
 ```
 
 ## How to Launch
-Just install python and execute [The bash script](grafana-data_exporter.sh).
-
-Don't forget to change the fields that needs to be modified in the scripts.
+Just install python and execute [The bash script](grafana-data_exporter.sh). </br>
+Don't forget to change the fields that needs to be modified in the scripts. </br>
+Install the Google Client Library :
+``` sh
+pip install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib
+```
+</br>
+Turn on the Google Sheets API from this page : https://developers.google.com/sheets/api/quickstart/python </br>
+In resulting dialog click DOWNLOAD CLIENT CONFIGURATION and save the file credentials.json to your working directory.
 
 ## Examples
 Environment: Using InfluxDB Docker container
@@ -35,6 +41,5 @@ Just send a pull-request 😉
 - <b>Kévin Gillet</b> - <i>Developper</i> - <a href="https://www.linkedin.com/in/k%C3%A9vin-gillet-50b25b175/">Linkedin</a>.
 
 ## Sources
-InfluxDB API : https://docs.influxdata.com/influxdb/v1.8/guides/write_data/
-
-Google SpreadSheets API : https://developers.google.com/sheets/api/quickstart/python
+InfluxDB API : https://docs.influxdata.com/influxdb/v1.8/guides/write_data/ </br>
+Google SpreadSheets API : https://developers.google.com/sheets/api/quickstart/python </br>
