@@ -7,6 +7,7 @@ git clone https://github.com/Kev1venteur/InfluxDBDataToGoogleSheets.git
 
 ## How to Launch
 Just install python and execute [The bash script](grafana-data_exporter.sh).
+
 Don't forget to change the fields that needs to be modified in the scripts.
 
 ## Examples
