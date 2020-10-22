@@ -80,6 +80,10 @@ def main():
 
         with open(csv_path, 'r') as csv_file:
             csvContents = csv_file.read()
+
+        #Here specify the sheet id you want to write on
+        sheet_id = "111999247"
+
         body = {
             'requests': [{
                 'pasteData': {
