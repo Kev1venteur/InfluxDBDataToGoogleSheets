@@ -10,7 +10,7 @@ from google.auth.transport.requests import Request
 import os
 
 #Use this only if you have a proxy
-os.environ['REQUESTS_CA_BUNDLE'] = 'certif.cer'
+os.environ['REQUESTS_CA_BUNDLE'] = 'cacert.pem'
 #put a copy in the current script folder and
 #then duplicate your certif to :
 #C:\Users\kgillet\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.9_qbz5n2kfra8p0\LocalCache\local-packages\Python39\site-packages\certifi
@@ -24,17 +24,18 @@ SCOPES = ['https://www.googleapis.com/auth/spreadsheets',
 SPREADSHEET_ID = '1MlvFP0t9QS_5DHF1xBhXcldJby3DAvUHZQH-EC1GRYU'
 worksheet_name = 'test'
 csv_path = 'formatted-csv-data.csv'
-creds_path = 'token.pickle'
+token_path = 'token.pickle'
+creds_file_path = 'credentials.json'
 range = "test!A2:D"
+#Here specify the sheet id you want to write on (gid number in URL)
+sheet_id_from_URL = "111999247"
 
 def main():
-    """Shows basic usage of the Sheets API.
-    Prints values from a sample spreadsheet.
-    """
     creds = None
     # The file token.pickle stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
     # time.
+    #You have to delete token.pickle file every time you change your environment
     if os.path.exists('token.pickle'):
         with open('token.pickle', 'rb') as token:
             creds = pickle.load(token)
@@ -44,27 +45,13 @@ def main():
             creds.refresh(Request())
         else:
             flow = InstalledAppFlow.from_client_secrets_file(
-                'credentials.json', SCOPES)
+                creds_file_path, SCOPES)
             creds = flow.run_local_server(port=0)
         # Save the credentials for the next run
         with open('token.pickle', 'wb') as token:
             pickle.dump(creds, token)
 
     service = build('sheets', 'v4', credentials=creds)
-
-    # convenience routines
-    def find_sheet_id_by_name(sheet_name):
-        # ugly, but works
-        sheets_with_properties = API \
-            .spreadsheets() \
-            .get(spreadsheetId=SPREADSHEET_ID, fields='sheets.properties') \
-            .execute() \
-            .get('sheets')
-
-        for sheet in sheets_with_properties:
-            if 'title' in sheet['properties'].keys():
-                if sheet['properties']['title'] == sheet_name:
-                    return sheet['properties']['sheetId']
 
     def push_csv_to_gsheet(csv_path, sheet_id):
         #Get last filled row to insert after it
@@ -80,9 +67,6 @@ def main():
 
         with open(csv_path, 'r') as csv_file:
             csvContents = csv_file.read()
-
-        #Here specify the sheet id you want to write on
-        sheet_id = "111999247"
 
         body = {
             'requests': [{
@@ -107,14 +91,14 @@ def main():
         return response
 
     # upload
-    with open(creds_path, 'rb') as token:
+    with open(token_path, 'rb') as token:
         credentials = pickle.load(token)
 
     API = build('sheets', 'v4', credentials=credentials)
 
     push_csv_to_gsheet(
         csv_path=csv_path,
-        sheet_id=find_sheet_id_by_name(worksheet_name)
+        sheet_id=sheet_id_from_URL
     )
 
 if __name__ == '__main__':
