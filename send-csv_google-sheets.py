@@ -1,3 +1,5 @@
+#I used Python 3.8 from MS store
+
 from __future__ import print_function
 import pickle
 import gspread
@@ -5,7 +7,14 @@ import os.path
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
+import os
 
+#Use this only if you have a proxy
+os.environ['REQUESTS_CA_BUNDLE'] = 'certif.cer'
+#put a copy in the current script folder and
+#then duplicate your certif to :
+#C:\Users\kgillet\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.9_qbz5n2kfra8p0\LocalCache\local-packages\Python39\site-packages\certifi
+#and replace cacert.pem with your cert
 
 # Delete tocken.pickles file every time you change the scopes
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets',
@@ -92,7 +101,6 @@ def main():
         request.InsertDataOption = "INSERT_ROWS"
         response = request.execute()
         return response
-
 
     # upload
     with open(creds_path, 'rb') as token:
