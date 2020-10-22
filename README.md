@@ -20,13 +20,17 @@ In resulting dialog click DOWNLOAD CLIENT CONFIGURATION and save the file creden
 Environment: Using InfluxDB Docker container
 
 ``` sh
+#-------------------Container Managment----------------------#
 #Pull the container
 docker pull influxdb
+
 #Start the container
 docker run --name=influxdb -d -p 8086:8086 influxdb
+
 #Get a shell in the container
 docker exec -it influxdb bash
 
+#--------------------Database Managment----------------------#
 #Create DB via http
 curl -i -XPOST http://localhost:8086/query --data-urlencode "q=CREATE DATABASE mydb"
 
