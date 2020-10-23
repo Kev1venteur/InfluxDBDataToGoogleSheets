@@ -1,12 +1,12 @@
 # InfluxDBDataToGoogleSheets
-This project goal is to automate enterprise reporting, by formatting InfluxDB data into google spreadsheet, to be used with datastudio
+:key: This project goal is to automate enterprise reporting, by formatting InfluxDB data into google spreadsheet, to be used with datastudio :key:
 ## How to Start
 ```
 git clone https://github.com/Kev1venteur/InfluxDBDataToGoogleSheets.git
 ```
 
 ## How to Launch
-:pushpin: Don't forget to change the fields that needs to be modified in the scripts. </br>
+:pushpin: Don't forget to change the fields that needs to be modified in the scripts. </br></br>
 :pushpin: Install the Google Client Library :
 ``` sh
 pip install --trusted-host pypi.python.org --trusted-host files.pythonhosted.org --trusted-host pypi.org --upgrade pip --upgrade requests-toolbelt google-api-python-client google-auth-httplib2 google-auth-oauthlib gspread
@@ -42,11 +42,11 @@ curl -G 'http://localhost:8086/query?pretty=true' --data-urlencode "db=mydb" --d
 ```
 
 ## How to contribute
-Just send a pull-request 😉
+Just send a pull-request :trophy:
 
 ## Author
-- <b>Kévin Gillet</b> - <i>Developper</i> - <a href="https://www.linkedin.com/in/k%C3%A9vin-gillet-50b25b175/">Linkedin</a>.
+:cocktail: <b>Kévin Gillet</b> - <i>Developper</i> - <a href="https://www.linkedin.com/in/k%C3%A9vin-gillet-50b25b175/">Linkedin</a>.
 
 ## Sources
-InfluxDB API : https://docs.influxdata.com/influxdb/v1.8/guides/write_data/ </br>
-Google Sheets API : https://developers.google.com/sheets/api/quickstart/python </br>
+:gem: InfluxDB API : https://docs.influxdata.com/influxdb/v1.8/guides/write_data/ </br>
+:gem: Google Sheets API : https://developers.google.com/sheets/api/quickstart/python </br>
