@@ -6,16 +6,15 @@ git clone https://github.com/Kev1venteur/InfluxDBDataToGoogleSheets.git
 ```
 
 ## How to Launch
-- [ ] Don't forget to change the fields that needs to be modified in the scripts. </br>
-- [ ] Install the Google Client Library :
+:point_right: Don't forget to change the fields that needs to be modified in the scripts. </br>
+:point_right: Install the Google Client Library :
 ``` sh
 pip install --trusted-host pypi.python.org --trusted-host files.pythonhosted.org --trusted-host pypi.org --upgrade pip --upgrade requests-toolbelt google-api-python-client google-auth-httplib2 google-auth-oauthlib gspread
 ```
-</br>
-- [ ] Turn on the Google Sheets API from this page : https://developers.google.com/sheets/api/quickstart/python </br>
-  -> In resulting dialog click DOWNLOAD CLIENT CONFIGURATION and save the file credentials.json to your working directory.</br></br>
-- [ ] Turn on the Google Drive API from this page : https://developers.google.com/drive/api/v3/quickstart/python </br></br>
-- [ ] Just install python 3.8 and execute [The bash script](grafana-data_exporter.sh). </br>
+:point_right: Turn on the Google Sheets API from this page : https://developers.google.com/sheets/api/quickstart/python </br>
+    :point_right: In resulting dialog click DOWNLOAD CLIENT CONFIGURATION and save the file credentials.json to your working directory.</br></br>
+:point_right: Turn on the Google Drive API from this page : https://developers.google.com/drive/api/v3/quickstart/python </br></br>
+:point_right: Just install python 3.8 and execute [The bash script](grafana-data_exporter.sh). </br>
 
 ## Examples
 Environment: Using InfluxDB Docker container
