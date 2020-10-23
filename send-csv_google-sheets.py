@@ -1,13 +1,17 @@
-#I used Python 3.8 from MS store
-
 from __future__ import print_function
 import pickle
 import gspread
-import os.path
-from googleapiclient.discovery import build
-from google_auth_oauthlib.flow import InstalledAppFlow
-from google.auth.transport.requests import Request
 import os
+from googleapiclient.discovery import build
+
+#I used Python 3.8 from MS store
+
+# The infos of a spreadsheet you have to modify
+SPREADSHEET_ID = '1MlvFP0t9QS_5DHF1xBhXcldJby3DAvUHZQH-EC1GRYU'
+#Here specify the sheet name you want to write on
+sheet_name = 'Feuille 2'
+#Here specify the sheet id you want to write on (gid number in URL)
+sheet_id_from_URL = "547949283"
 
 #Use this only if you have a proxy
 os.environ['REQUESTS_CA_BUNDLE'] = 'cacert.pem'
@@ -20,15 +24,10 @@ os.environ['REQUESTS_CA_BUNDLE'] = 'cacert.pem'
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets',
           'https://www.googleapis.com/auth/drive']
 
-# The infos of a spreadsheet.
-SPREADSHEET_ID = '1MlvFP0t9QS_5DHF1xBhXcldJby3DAvUHZQH-EC1GRYU'
-worksheet_name = 'test'
 csv_path = 'formatted-csv-data.csv'
 token_path = 'token.pickle'
 creds_file_path = 'credentials.json'
-range = "test!A2:D"
-#Here specify the sheet id you want to write on (gid number in URL)
-sheet_id_from_URL = "111999247"
+range = sheet_name + "!A2:D"
 
 def main():
     creds = None
@@ -60,7 +59,7 @@ def main():
             .get(spreadsheetId=SPREADSHEET_ID, range=range) \
             .execute() \
             .get('values', [])
-
+        range_prefix = range
         last_row = rows[-1] if rows else None
         last_row_id = len(rows) + 1
 
