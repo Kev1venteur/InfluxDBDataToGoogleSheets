@@ -14,8 +14,8 @@ pip install --trusted-host pypi.python.org --trusted-host files.pythonhosted.org
 ```
 </br>
 Turn on the Google Sheets API from this page : https://developers.google.com/sheets/api/quickstart/python </br>
+In resulting dialog click DOWNLOAD CLIENT CONFIGURATION and save the file credentials.json to your working directory.</br></br>
 Turn on the Google Drive API from this page : https://developers.google.com/drive/api/v3/quickstart/python </br>
-In resulting dialog click DOWNLOAD CLIENT CONFIGURATION and save the file credentials.json to your working directory.
 
 ## Examples
 Environment: Using InfluxDB Docker container
