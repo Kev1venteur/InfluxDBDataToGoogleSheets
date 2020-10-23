@@ -6,7 +6,8 @@ from googleapiclient.discovery import build
 
 #I used Python 3.8 from MS store
 
-# The infos of a spreadsheet you have to modify
+#----------The infos of a spreadsheet you have to modify----------------#
+#Get the spreadsheet id in the url from your browser
 SPREADSHEET_ID = '1MlvFP0t9QS_5DHF1xBhXcldJby3DAvUHZQH-EC1GRYU'
 #Here specify the sheet name you want to write on
 sheet_name = 'Feuille 2'
