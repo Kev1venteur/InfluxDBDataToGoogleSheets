@@ -1,5 +1,5 @@
 # InfluxDBDataToGoogleSheets
-:key: This project goal is to automate enterprise reporting, by formatting InfluxDB data into google spreadsheet, to be used with datastudio :key:
+:key: This project goal is to automate enterprise reporting, by formatting InfluxDB data into google spreadsheet, to be used with datastudio
 ## How to Start
 ```
 git clone https://github.com/Kev1venteur/InfluxDBDataToGoogleSheets.git
@@ -12,7 +12,7 @@ git clone https://github.com/Kev1venteur/InfluxDBDataToGoogleSheets.git
 pip install --trusted-host pypi.python.org --trusted-host files.pythonhosted.org --trusted-host pypi.org --upgrade pip --upgrade requests-toolbelt google-api-python-client google-auth-httplib2 google-auth-oauthlib gspread
 ```
 :pushpin: Turn on the Google Sheets API from this page : https://developers.google.com/sheets/api/quickstart/python </br>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :point_right: In resulting dialog click DOWNLOAD CLIENT CONFIGURATION and save the file credentials.json to your working directory.</br></br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :point_right: In resulting dialog click DOWNLOAD CLIENT CONFIGURATION and save the file credentials.json to your working directory.</br></br>
 :pushpin: Turn on the Google Drive API from this page : https://developers.google.com/drive/api/v3/quickstart/python </br></br>
 :pushpin: Just install python 3.8 and execute [The bash script](grafana-data_exporter.sh). </br>
 
