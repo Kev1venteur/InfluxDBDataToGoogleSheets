@@ -11,8 +11,8 @@ import os
 
 #Use this only if you have a proxy
 os.environ['REQUESTS_CA_BUNDLE'] = 'cacert.pem'
-#put a copy in the current script folder and
-#then duplicate your certif to :
+#put a copy of your certificate in the current script folder and
+#then duplicate your it to :
 #C:\Users\kgillet\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.9_qbz5n2kfra8p0\LocalCache\local-packages\Python39\site-packages\certifi
 #and replace cacert.pem with your cert
 
@@ -35,7 +35,6 @@ def main():
     # The file token.pickle stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
     # time.
-    #You have to delete token.pickle file every time you change your environment
     if os.path.exists('token.pickle'):
         with open('token.pickle', 'rb') as token:
             creds = pickle.load(token)
