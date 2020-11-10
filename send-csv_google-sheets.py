@@ -15,15 +15,14 @@ SPREADSHEET_ID = '1MlvFP0t9QS_5DHF1xBhXcldJby3DAvUHZQH-EC1GRYU'
 sheet_name = 'Feuille 2'
 #Here specify the sheet id you want to write on (gid number in URL)
 sheet_id_from_URL = "547949283"
+#-----------------------------------------------------------------------#
 
 #Use this only if you have a proxy witout VPN
-#os.environ['REQUESTS_CA_BUNDLE'] = 'cacert.pem'
-#Use only this cert if on VPN
-os.environ['REQUESTS_CA_BUNDLE'] = 'vpn_cacert.pem'
+os.environ['REQUESTS_CA_BUNDLE'] = 'cacert.pem'
 #put a copy of your certificate in the current script folder and
 #then duplicate your it to :
 #C:\Users\kgillet\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.9_qbz5n2kfra8p0\LocalCache\local-packages\Python39\site-packages\certifi
-#and replace cacert.pem with your cert
+#and replace cacert.pem with your certv (don't forget to name it "cacert.pem")
 
 # Delete tocken.pickles file every time you change the scopes
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets',
