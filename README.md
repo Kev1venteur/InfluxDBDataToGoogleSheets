@@ -45,7 +45,7 @@ curl -G 'http://localhost:8086/query?pretty=true' --data-urlencode "db=mydb" --d
 Just send a pull-request :trophy:
 
 ## Author
-:cocktail: <b>Kévin Gillet</b> - <i>Developper/Sysadmin</i> - <a href="https://www.linkedin.com/in/k%C3%A9vin-gillet-50b25b175/">Linkedin</a>.
+:cocktail: <b>Kévin Gillet</b> - <i>Developper | Sysadmin</i> - <a href="https://www.linkedin.com/in/k%C3%A9vin-gillet-50b25b175/">Linkedin</a>.
 
 ## Sources
 :gem: InfluxDB API : https://docs.influxdata.com/influxdb/v1.8/guides/write_data/ </br>
