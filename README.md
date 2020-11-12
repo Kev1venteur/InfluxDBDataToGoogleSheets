@@ -14,7 +14,7 @@ pip install --trusted-host pypi.python.org --trusted-host files.pythonhosted.org
 :pushpin: Turn on the Google Sheets API from this page : https://developers.google.com/sheets/api/quickstart/python </br>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :point_right: In resulting dialog click DOWNLOAD CLIENT CONFIGURATION and save the file credentials.json to your working directory.</br></br>
 :pushpin: Turn on the Google Drive API from this page : https://developers.google.com/drive/api/v3/quickstart/python </br></br>
-:pushpin: Just install python 3.8 (also available on the MSstore) and execute [The bash script](influxdb-data_exporter.sh). </br>
+:pushpin: Just install python 3.8 (also available on the [MSstore](https://www.microsoft.com/fr-fr/p/python-38/9mssztt1n39l?activetab=pivot:overviewtab)) and execute [The bash script](influxdb-data_exporter.sh). </br>
 
 ## Examples
 Environment: Using InfluxDB Docker container
