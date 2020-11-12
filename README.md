@@ -9,12 +9,12 @@ git clone https://github.com/Kev1venteur/InfluxDBDataToGoogleSheets.git
 :pushpin: Don't forget to change the fields that needs to be modified in the scripts. </br></br>
 :pushpin: Install the Google Client Library :
 ``` sh
-pip install --trusted-host pypi.python.org --trusted-host files.pythonhosted.org --trusted-host pypi.org --upgrade pip requests-toolbelt google-api-python-client google-auth-httplib2 google-auth-oauthlib gspread certifi
+pip install --trusted-host pypi.python.org --trusted-host files.pythonhosted.org --trusted-host pypi.org --upgrade requests-toolbelt google-api-python-client google-auth-httplib2 google-auth-oauthlib gspread certifi urllib3
 ```
 :pushpin: Turn on the Google Sheets API from this page : https://developers.google.com/sheets/api/quickstart/python </br>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :point_right: In resulting dialog click DOWNLOAD CLIENT CONFIGURATION and save the file credentials.json to your working directory.</br></br>
 :pushpin: Turn on the Google Drive API from this page : https://developers.google.com/drive/api/v3/quickstart/python </br></br>
-:pushpin: Just install python 3.8 (also available on the [MSstore](https://www.microsoft.com/fr-fr/p/python-38/9mssztt1n39l?activetab=pivot:overviewtab)) and execute [The bash script](influxdb-data_exporter.sh). </br>
+:pushpin: Just install python [2.7.16](https://www.python.org/downloads/release/python-2716/) and execute [The bash script](influxdb-data_exporter.sh). </br>
 
 ## Examples
 Environment: Using InfluxDB Docker container
