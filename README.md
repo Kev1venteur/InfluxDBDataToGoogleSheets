@@ -14,7 +14,9 @@ pip install --trusted-host pypi.python.org --trusted-host files.pythonhosted.org
 :pushpin: Turn on the Google Sheets API from this page : https://developers.google.com/sheets/api/quickstart/python </br>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :point_right: In resulting dialog click DOWNLOAD CLIENT CONFIGURATION and save the file credentials.json to your working directory.</br></br>
 :pushpin: Turn on the Google Drive API from this page : https://developers.google.com/drive/api/v3/quickstart/python </br></br>
-:pushpin: Just install python [2.7.16](https://www.python.org/downloads/release/python-2716/) and execute [The bash script](influxdb-data_exporter.sh). </br>
+:pushpin: Install python [2.7.16](https://www.python.org/downloads/release/python-2716/). </br></br>
+:pushpin: Install SQL*Plus [19.6](https://download.oracle.com/otn_software/nt/instantclient/19600/instantclient-sqlplus-windows.x64-19.6.0.0.0dbru.zip). </br></br>
+:pushpin: Execute [This script](launcher.sh).</br>
 
 ## Examples
 Environment: Using InfluxDB Docker container
