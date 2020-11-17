@@ -3,7 +3,7 @@
 echo "Getting data from InfluxDB..."
 ./influxdb-data_exporter.sh
 #Removing the first csv line
-sed 1d csv/raw-influx-csv-data.csv > csv/formatted-influx-csv-data.csv
+sed 1d csv/raw/raw-influx-data.csv > csv/formatted/formatted-influx-data.csv
 #Call bash script to export Oracle data to CSV
 echo "Getting data from Oracle..."
 ./oracle-data_export/oracle-data_exporter.sh

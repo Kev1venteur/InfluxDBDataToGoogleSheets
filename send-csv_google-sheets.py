@@ -19,7 +19,7 @@ sheet_id_from_URL = "547949283"
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets',
           'https://www.googleapis.com/auth/drive']
 
-csv_path = 'csv/formatted-influx-csv-data.csv'
+csv_path = 'csv/formatted/formatted-influx-csv-data.csv'
 token_path = 'credentials/token.pickle'
 creds_file_path = 'credentials/credentials.json'
 range = sheet_name + "!A2:D"
