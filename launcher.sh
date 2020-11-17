@@ -15,7 +15,12 @@ echo
 #Call bash script to export Oracle data to CSV
 echo "Getting data from Oracle..."
 echo
+echo ",max-ram_usage,average-ram_usage" > csv/formatted/formatted-oracle-data.csv
+sed -e 's/\s\+/,/g' csv/raw/raw-oracle-data.csv >> csv/formatted/formatted-oracle-data.csv
+echo "InfluxDB data correctly formatted to CSV normalisation."
+echo
 ./oracle-data_export/oracle-data_exporter.sh
+#
 #----------------------------------PROXY---------------------------------------#
 #If you have a proxy uncomment the next line and put your proxy cert path
 export REQUESTS_CA_BUNDLE=credentials/cacert.pem && echo "Set proxy cert."\
