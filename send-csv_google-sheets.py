@@ -10,27 +10,31 @@ import os
 #Get the spreadsheet id in the url from your browser
 SPREADSHEET_ID = '1MlvFP0t9QS_5DHF1xBhXcldJby3DAvUHZQH-EC1GRYU'
 #Here specify the sheet name you want to write on
-sheet_name = 'Feuille 2'
+sheet_name_influx = 'InfluxDB'
+sheet_name_oracle = 'Oracle'
 #Here specify the sheet id you want to write on (gid number in URL)
-sheet_id_from_URL = "547949283"
+influx_sheet_id_from_URL = "547949283"
+oracle_sheet_id_from_URL = "111999247"
 #-----------------------------------------------------------------------#
 
 # Delete tocken.pickles file every time you change the scopes
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets',
           'https://www.googleapis.com/auth/drive']
 
-csv_path = 'formatted-csv-data.csv'
-token_path = 'token.pickle'
-creds_file_path = 'credentials.json'
-range = sheet_name + "!A2:D"
+influx_csv_path = 'csv/formatted/formatted-influx-data.csv'
+oracle_csv_path = 'csv/formatted/formatted-oracle-data.csv'
+token_path = 'credentials/token.pickle'
+creds_file_path = 'credentials/credentials.json'
+influx_range = sheet_name_influx + "!A2:D"
+oracle_range = sheet_name_oracle + "!A2:D"
 
 def main():
     creds = None
     # The file token.pickle stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
     # time.
-    if os.path.exists('token.pickle'):
-        with open('token.pickle', 'rb') as token:
+    if os.path.exists(token_path):
+        with open(token_path, 'rb') as token:
             creds = pickle.load(token)
     # If there are no (valid) credentials available, let the user log in.
     if not creds or not creds.valid:
@@ -41,12 +45,12 @@ def main():
                 creds_file_path, SCOPES)
             creds = flow.run_local_server(port=0)
         # Save the credentials for the next run
-        with open('token.pickle', 'wb') as token:
+        with open(token_path, 'wb') as token:
             pickle.dump(creds, token)
 
     service = build('sheets', 'v4', credentials=creds)
 
-    def push_csv_to_gsheet(csv_path, sheet_id):
+    def push_csv_to_gsheet(csv_path, sheet_id, range):
         #Get last filled row to insert after it
         rows = service \
             .spreadsheets() \
@@ -90,9 +94,18 @@ def main():
     API = build('sheets', 'v4', credentials=credentials)
 
     push_csv_to_gsheet(
-        csv_path=csv_path,
-        sheet_id=sheet_id_from_URL
+        csv_path=influx_csv_path,
+        sheet_id=influx_sheet_id_from_URL,
+        range=influx_range
     )
+
+    push_csv_to_gsheet(
+        csv_path=oracle_csv_path,
+        sheet_id=oracle_sheet_id_from_URL,
+        range=oracle_range
+    )
+
+    print("Done.")
 
 if __name__ == '__main__':
     main()
