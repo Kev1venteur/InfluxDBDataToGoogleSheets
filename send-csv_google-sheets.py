@@ -10,19 +10,23 @@ import os
 #Get the spreadsheet id in the url from your browser
 SPREADSHEET_ID = '1MlvFP0t9QS_5DHF1xBhXcldJby3DAvUHZQH-EC1GRYU'
 #Here specify the sheet name you want to write on
-sheet_name = 'InfluxDB'
+sheet_name_influx = 'InfluxDB'
+sheet_name_oracle = 'Oracle'
 #Here specify the sheet id you want to write on (gid number in URL)
-sheet_id_from_URL = "547949283"
+influx_sheet_id_from_URL = "547949283"
+oracle_sheet_id_from_URL = "111999247"
 #-----------------------------------------------------------------------#
 
 # Delete tocken.pickles file every time you change the scopes
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets',
           'https://www.googleapis.com/auth/drive']
 
-csv_path = 'csv/formatted/formatted-influx-data.csv'
+influx_csv_path = 'csv/formatted/formatted-influx-data.csv'
+oracle_csv_path = 'csv/formatted/formatted-oracle-data.csv'
 token_path = 'credentials/token.pickle'
 creds_file_path = 'credentials/credentials.json'
-range = sheet_name + "!A2:D"
+influx_range = sheet_name_influx + "!A2:D"
+oracle_range = sheet_name_oracle + "!A2:D"
 
 def main():
     creds = None
@@ -46,7 +50,7 @@ def main():
 
     service = build('sheets', 'v4', credentials=creds)
 
-    def push_csv_to_gsheet(csv_path, sheet_id):
+    def push_csv_to_gsheet(csv_path, sheet_id, range):
         #Get last filled row to insert after it
         rows = service \
             .spreadsheets() \
@@ -90,8 +94,15 @@ def main():
     API = build('sheets', 'v4', credentials=credentials)
 
     push_csv_to_gsheet(
-        csv_path=csv_path,
-        sheet_id=sheet_id_from_URL
+        csv_path=influx_csv_path,
+        sheet_id=influx_sheet_id_from_URL,
+        range=influx_range
+    )
+
+    push_csv_to_gsheet(
+        csv_path=oracle_csv_path,
+        sheet_id=oracle_sheet_id_from_URL,
+        range=oracle_range
     )
 
     print("Done.")
