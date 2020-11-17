@@ -1,4 +1,8 @@
 #!/bin/bash
+#-----------------------------CAUTION---------------------------------#
+#If the script does not works for any dark reasons, try deleting your
+#token.picle file in credentials folder
+#---------------------------------------------------------------------#
 #Call bash script to export InfluxDB data to CSV
 echo "Getting data from InfluxDB..."
 ./influxdb-data_exporter.sh
