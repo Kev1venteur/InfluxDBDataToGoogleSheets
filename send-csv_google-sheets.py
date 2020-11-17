@@ -94,5 +94,7 @@ def main():
         sheet_id=sheet_id_from_URL
     )
 
+    print("Done.")
+
 if __name__ == '__main__':
     main()

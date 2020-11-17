@@ -19,17 +19,19 @@ echo
 #Make alias to correctly call python from bash
 #---------------------------------WINDOWS--------------------------------------#
 #Uncomment the next line ONLY FOR WINDOWS !
-alias python='winpty python.exe'
+alias python='winpty python.exe' && echo "Set Python path for Windows."\
+&& echo
 #----------------------------------PROXY---------------------------------------#
 #If you have a proxy uncomment the next line and put your proxy cert path
-export REQUESTS_CA_BUNDLE=credentials/cacert.pem
+export REQUESTS_CA_BUNDLE=credentials/cacert.pem && echo "Set proxy cert."\
+&& echo
 #Then duplicate your cert to the path returned by "locate-cert-path.py"
 #with the name "cacert.pem"
 #You can execute it by typing : "python *scriptfolderpath*/locate-cert-path.py"
 #------------------------------------------------------------------------------#
 #Call python script to write csv data to google spreadsheet
 echo "Sending all data to Google Sheets..."
-python send-csv_google-sheets.py
+./loading-animation.sh python send-csv_google-sheets.py
 #Pause to see the terminal log
 echo
-read -p "End, press enter to continue"
+read -p "Press enter to close"
