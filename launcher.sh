@@ -15,7 +15,12 @@ echo
 #Call bash script to export Oracle data to CSV
 echo "Getting data from Oracle..."
 echo
+#Put commas instead of spaces
 sed -e 's/\s\+/,/g' csv/raw/raw-oracle-data.csv > csv/formatted/formatted-oracle-data.csv
+#Add dates to CSV
+cat csv/formatted/formatted-oracle-data.csv | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> csv/raw/raw-oracle-data.csv
+#Removing first csv line
+sed 1d csv/raw/raw-oracle-data.csv > csv/formatted/formatted-oracle-data.csv
 echo "InfluxDB data correctly formatted to CSV normalisation."
 echo
 ./oracle-data_export/oracle-data_exporter.sh
