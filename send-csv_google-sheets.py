@@ -19,9 +19,9 @@ sheet_id_from_URL = "547949283"
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets',
           'https://www.googleapis.com/auth/drive']
 
-csv_path = 'formatted-csv-data.csv'
-token_path = 'token.pickle'
-creds_file_path = 'credentials.json'
+csv_path = 'csv/formatted-influx-csv-data.csv'
+token_path = 'credentials/token.pickle'
+creds_file_path = 'credentials/credentials.json'
 range = sheet_name + "!A2:D"
 
 def main():
@@ -29,8 +29,8 @@ def main():
     # The file token.pickle stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
     # time.
-    if os.path.exists('token.pickle'):
-        with open('token.pickle', 'rb') as token:
+    if os.path.exists(token_path):
+        with open(token_path, 'rb') as token:
             creds = pickle.load(token)
     # If there are no (valid) credentials available, let the user log in.
     if not creds or not creds.valid:
@@ -41,7 +41,7 @@ def main():
                 creds_file_path, SCOPES)
             creds = flow.run_local_server(port=0)
         # Save the credentials for the next run
-        with open('token.pickle', 'wb') as token:
+        with open(token_path, 'wb') as token:
             pickle.dump(creds, token)
 
     service = build('sheets', 'v4', credentials=creds)

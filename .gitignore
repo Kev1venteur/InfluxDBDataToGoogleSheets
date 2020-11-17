@@ -1,4 +1,2 @@
-credentials.json
-token.pickle
-raw-csv-data.csv
-formatted-csv-data.csv
+credentials/
+csv/*
