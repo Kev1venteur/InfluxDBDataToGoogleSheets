@@ -10,7 +10,7 @@ import os
 #Get the spreadsheet id in the url from your browser
 SPREADSHEET_ID = '1MlvFP0t9QS_5DHF1xBhXcldJby3DAvUHZQH-EC1GRYU'
 #Here specify the sheet name you want to write on
-sheet_name = 'Feuille 2'
+sheet_name = 'InfluxDB'
 #Here specify the sheet id you want to write on (gid number in URL)
 sheet_id_from_URL = "547949283"
 #-----------------------------------------------------------------------#
