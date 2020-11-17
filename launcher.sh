@@ -16,11 +16,6 @@ echo
 echo "Getting data from Oracle..."
 echo
 ./oracle-data_export/oracle-data_exporter.sh
-#Make alias to correctly call python from bash
-#---------------------------------WINDOWS--------------------------------------#
-#Uncomment the next line ONLY FOR WINDOWS !
-alias python='winpty python.exe' && echo "Set Python path for Windows."\
-&& echo
 #----------------------------------PROXY---------------------------------------#
 #If you have a proxy uncomment the next line and put your proxy cert path
 export REQUESTS_CA_BUNDLE=credentials/cacert.pem && echo "Set proxy cert."\
@@ -31,7 +26,7 @@ export REQUESTS_CA_BUNDLE=credentials/cacert.pem && echo "Set proxy cert."\
 #------------------------------------------------------------------------------#
 #Call python script to write csv data to google spreadsheet
 echo "Sending all data to Google Sheets..."
-./loading-animation.sh python send-csv_google-sheets.py
+./loading-animation.sh python.exe send-csv_google-sheets.py
 #Pause to see the terminal log
 echo
 read -p "Press enter to close"

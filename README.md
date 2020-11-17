@@ -6,8 +6,8 @@ git clone https://github.com/Kev1venteur/InfluxDBDataToGoogleSheets.git
 ```
 
 ## How to set things up
-:pencil: Edit your Sheets infos in [this file](send-csv_google-sheets.py). </br></br>
-:pencil: If you have a proxy, refer to [this file](launcher.sh). </br>
+:pencil2: Edit your Sheets infos in [this file](send-csv_google-sheets.py). </br></br>
+:pencil2: If you have a proxy, refer to [this file](launcher.sh#L26). </br>
 
 ## How to Launch
 :pushpin: Don't forget to change the fields that needs to be modified in the scripts. </br></br>
