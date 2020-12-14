@@ -33,6 +33,7 @@ cert_path=$(python.exe locate-cert-path.py)
 yes | cp credentials/cacert.pem $cert_path
 #Setting python env variable to use cert
 export REQUESTS_CA_BUNDLE=credentials/cacert.pem && echo "Set proxy cert." && echo
+#Setting proxy URL for U GIE IRIS zscaler
 export http_proxy="http://127.0.0.1:9000"
 export https_proxy="http://127.0.0.1:9000"
 #-----------------------------------------------------------------------------------#
