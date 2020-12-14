@@ -7,7 +7,7 @@ git clone https://github.com/Kev1venteur/InfluxDBDataToGoogleSheets.git
 
 ## How to set things up
 :pencil2: Edit your Sheets infos in [this file](send-csv_google-sheets.py). </br></br>
-:pencil2: If you have a proxy, refer to [this file](launcher.sh#L30). </br>
+:pencil2: If you have a proxy, refer to [this file](launcher.sh#L28). </br>
 
 ## How to Launch
 :pushpin: Don't forget to change the fields that needs to be modified in the scripts. </br></br>
@@ -18,7 +18,7 @@ pip install --trusted-host pypi.python.org --trusted-host files.pythonhosted.org
 :pushpin: Turn on the Google Sheets API from this page : https://developers.google.com/sheets/api/quickstart/python </br>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :point_right: In resulting dialog click DOWNLOAD CLIENT CONFIGURATION and save the file credentials.json to your working directory.</br></br>
 :pushpin: Turn on the Google Drive API from this page : https://developers.google.com/drive/api/v3/quickstart/python </br></br>
-:pushpin: Just install python [2.7.16](https://www.python.org/downloads/release/python-2716/) and execute [The bash script](influxdb-data_exporter.sh). </br>
+:pushpin: Just install [Python](https://www.python.org/downloads/) (Tested version 3.9.1) and execute [The Launcher bash script](launcher.sh). </br>
 
 ## Examples
 Environment: Using InfluxDB Docker container

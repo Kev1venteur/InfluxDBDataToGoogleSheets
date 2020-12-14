@@ -1,9 +1,9 @@
 #!/bin/bash
-#---------------------------------CAUTION--------------------------------------#
+#---------------------------------CAUTION-------------------------------------------#
 #If the script does not works for any dark reasons, try deleting your
 #token.picle file in credentials folder & restart your internet
 #connection.
-#------------------------------------------------------------------------------#
+#-----------------------------------------------------------------------------------#
 #Call bash script to export InfluxDB data to CSV
 echo "Getting data from InfluxDB..."
 echo
@@ -21,18 +21,21 @@ sed -e 's/\s\+/,/g' csv/raw/raw-oracle-data.csv > csv/formatted/formatted-oracle
 cat csv/formatted/formatted-oracle-data.csv | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> csv/raw/raw-oracle-data.csv
 #Removing first csv line
 sed 1d csv/raw/raw-oracle-data.csv > csv/formatted/formatted-oracle-data.csv
-echo "InfluxDB data correctly formatted to CSV normalisation."
+echo "Oracle data correctly formatted to CSV normalisation."
 echo
 ./oracle-data_export/oracle-data_exporter.sh
 #
-#----------------------------------PROXY---------------------------------------#
-#If you have a proxy uncomment the next line and put your proxy cert path
-export REQUESTS_CA_BUNDLE=credentials/cacert.pem && echo "Set proxy cert."\
-&& echo
-#Then duplicate your cert to the path returned by "locate-cert-path.py"
-#with the name "cacert.pem"
-#You can execute it by typing : "python *scriptfolderpath*/locate-cert-path.py"
-#------------------------------------------------------------------------------#
+#----------------------------------PROXY--------------------------------------------#
+#If you have a proxy uncomment the 2 next lines and put your proxy cert path
+#Getting cert path location
+cert_path=$(python.exe locate-cert-path.py)
+#Replacing Certifi cert with credentials/cacert.pem
+yes | cp credentials/cacert.pem $cert_path
+#Setting python env variable to use cert
+export REQUESTS_CA_BUNDLE=credentials/cacert.pem && echo "Set proxy cert." && echo
+export http_proxy="http://127.0.0.1:9000"
+export https_proxy="http://127.0.0.1:9000"
+#-----------------------------------------------------------------------------------#
 #Call python script to write csv data to google spreadsheet
 echo "Sending all data to Google Sheets..."
 ./loading-animation.sh python.exe send-csv_google-sheets.py
