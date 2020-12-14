@@ -21,7 +21,7 @@ pip install --trusted-host pypi.python.org --trusted-host files.pythonhosted.org
 :pushpin: Just install [Python](https://www.python.org/downloads/) (Tested version 3.9.1) and execute [The Launcher bash script](launcher.sh). </br>
 
 ## Examples
-Environment: Using InfluxDB Docker container
+Environment: Using InfluxDB Docker container as datasource
 
 ``` sh
 #-------------------Container Managment----------------------#
