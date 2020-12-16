@@ -7,6 +7,6 @@ curl -s -b credentials/temboard.cookie -k https://u3recu523:8888/settings/instan
 sed -n 's/<td>\(.*\)<\/td>/\1/Ip' csv/raw/raw-temboard-data.csv > csv/raw/raw-temboard2-data.csv
 #Only getting lines ending by ".fr"
 cat csv/raw/raw-temboard2-data.csv | grep '\.fr$' > csv/formatted/formatted-temboard-data.csv
-#Deleting temp temboard file
+#Deleting temp temboard hostname file
 rm csv/raw/raw-temboard2-data.csv
 echo "Temboard hostnames succesfully exported."
