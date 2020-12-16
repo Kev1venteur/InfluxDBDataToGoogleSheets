@@ -17,7 +17,7 @@ export REQUESTS_CA_BUNDLE=credentials/cacert.pem && echo "Set proxy cert." && ec
 export http_proxy="http://127.0.0.1:9000"
 export https_proxy="http://127.0.0.1:9000"
 #-----------------------------------------------------------------------------------#
-#Call bash script to export hostnames to CSV from temboard via HTTP API
+#Call bash script to export hostnames of postgresql servers from temboard via HTTP
 echo "Getting hostnames from temboard..."
 echo
 ./temboard-hostnames_exporter.sh
