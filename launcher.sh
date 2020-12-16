@@ -24,18 +24,21 @@ echo
 echo
 
 #Call bash script to export InfluxDB data to CSV via HTTP API
+echo
 echo "Getting data from InfluxDB..."
 echo
 ./influxdb-data_exporter.sh
 echo
 
 #Call bash script to export Oracle data to CSV via SQL request
+echo
 echo "Getting data from Oracle..."
 echo
 ./oracle-data_export/oracle-data_exporter.sh
 echo
 
 #Call python script to write csv data to google spreadsheet
+echo
 echo "Sending all data to Google Sheets..."
 ./loading-animation.sh python.exe send-csv_google-sheets.py
 
