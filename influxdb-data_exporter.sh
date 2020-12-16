@@ -6,3 +6,6 @@
 #Export the db returned values to csv format
 curl -G 'http://localhost:8086/query?pretty=true' --data-urlencode "db=mydb" --data-urlencode "q=SELECT \"value\" FROM \"cpu_load_short\" WHERE \"region\"='us-west'" -H "Accept: application/csv" > csv/raw/raw-influx-data.csv
 echo
+#Removing the first csv line
+sed 1d csv/raw/raw-influx-data.csv > csv/formatted/formatted-influx-data.csv
+echo "InfluxDB data correctly formatted to CSV normalisation."
