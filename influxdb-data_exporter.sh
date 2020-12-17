@@ -8,7 +8,7 @@
 #Foreach hostname, getting data from influxdb directly into separated CSV format
 cat csv/formatted/formatted-temboard-data.csv | while read hostname
 do
-  curl -s -G 'http://localhost:8086/query?pretty=true'\
+  curl -s -S -G 'http://localhost:8086/query?pretty=true'\
           --data-urlencode "db=mydb"\
           --data-urlencode "q=SELECT \"value\" FROM \"cpu_load_short\" WHERE \"host\"='"$hostname"'"\
           -H "Accept: application/csv" > 'csv/raw/raw-influx('"$hostname"')-data.csv'
