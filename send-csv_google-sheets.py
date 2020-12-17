@@ -9,24 +9,15 @@ import os
 #----------The infos of a spreadsheet you have to modify----------------#
 #Get the spreadsheet id in the url from your browser
 SPREADSHEET_ID = '1MlvFP0t9QS_5DHF1xBhXcldJby3DAvUHZQH-EC1GRYU'
-#Here specify the sheet name you want to write on
-sheet_name_influx = 'InfluxDB'
-sheet_name_oracle = 'Oracle'
-#Here specify the sheet id you want to write on (gid number in URL)
-influx_sheet_id_from_URL = "547949283"
-oracle_sheet_id_from_URL = "111999247"
 #-----------------------------------------------------------------------#
 
 # Delete tocken.pickles file every time you change the scopes
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets',
           'https://www.googleapis.com/auth/drive']
 
-influx_csv_path = 'csv/formatted/formatted-influx-data.csv'
-oracle_csv_path = 'csv/formatted/formatted-oracle-data.csv'
+csv_base_path = 'csv/formatted/'
 token_path = 'credentials/token.pickle'
 creds_file_path = 'credentials/credentials.json'
-influx_range = sheet_name_influx + "!A2:D"
-oracle_range = sheet_name_oracle + "!A2:D"
 
 def main():
     creds = None
@@ -70,8 +61,8 @@ def main():
                 'pasteData': {
                     "coordinate": {
                         "sheetId": sheet_id,
-                        "rowIndex": last_row_id,  # adapt this if you need different positioning
-                        "columnIndex": "0", # adapt this if you need different positioning
+                        "rowIndex": last_row_id,
+                        "columnIndex": "0",
                     },
                     "data": csvContents,
                     "type": 'PASTE_NORMAL',
@@ -79,7 +70,7 @@ def main():
                 }
             }]
         }
-        request = API \
+        request = service \
             .spreadsheets() \
             .batchUpdate(spreadsheetId=SPREADSHEET_ID, body=body)
 
@@ -87,23 +78,36 @@ def main():
         response = request.execute()
         return response
 
+    def find_sheet_id_by_name(sheet_name):
+        #ugly, but works
+        sheets_with_properties = service \
+            .spreadsheets() \
+            .get(spreadsheetId=SPREADSHEET_ID, fields='sheets.properties') \
+            .execute() \
+            .get('sheets')
+
+        for sheet in sheets_with_properties:
+            if 'title' in sheet['properties'].keys():
+                if sheet['properties']['title'] == sheet_name:
+                    return sheet['properties']['sheetId']
+
     # upload
     with open(token_path, 'rb') as token:
         credentials = pickle.load(token)
 
-    API = build('sheets', 'v4', credentials=credentials)
-
-    push_csv_to_gsheet(
-        csv_path=influx_csv_path,
-        sheet_id=influx_sheet_id_from_URL,
-        range=influx_range
-    )
-
-    push_csv_to_gsheet(
-        csv_path=oracle_csv_path,
-        sheet_id=oracle_sheet_id_from_URL,
-        range=oracle_range
-    )
+    #For each file create sheet if there is not one and push data into it
+    for filename in os.listdir(csv_base_path):
+        #Setting range to write in sheet
+        range = filename + "!A2:D"
+        #Setting CSV path with base + hostname
+        csv_path = csv_base_path + filename
+        #Pushing data to sheet
+        push_csv_to_gsheet(
+            csv_path=csv_path,
+            sheet_id=find_sheet_id_by_name(filename),
+            range=range
+        )
+        continue
 
     print("Done.")
 

@@ -17,9 +17,9 @@ echo -e "SET PAGESIZE 0\n SET FEEDBACK OFF\n $sql" | \
 oracle-data_export/instantclient_19_6/sqlplus.exe -S -L "$ORACLE_USERNAME/$ORACLE_PASSWORD@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=$ORACLE_HOST)(PORT=$ORACLE_PORT))(CONNECT_DATA=(SERVICE_NAME=$ORACLE_DATABASE)))" > csv/raw/raw-oracle-data.csv
 
 #Put commas instead of spaces in CSV
-sed -e 's/\s\+/,/g' csv/raw/raw-oracle-data.csv > csv/formatted/oracle.csv
+sed -e 's/\s\+/,/g' csv/raw/raw-oracle-data.csv > csv/formatted/oracle
 #Add dates to CSV
-cat csv/formatted/oracle.csv | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> csv/raw/raw-oracle-data.csv
+cat csv/formatted/oracle | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> csv/raw/raw-oracle-data.csv
 #Removing first csv line
-sed 1d csv/raw/raw-oracle-data.csv > csv/formatted/oracle.csv
+sed 1d csv/raw/raw-oracle-data.csv > csv/formatted/oracle
 echo "Oracle data correctly formatted to CSV normalisation."

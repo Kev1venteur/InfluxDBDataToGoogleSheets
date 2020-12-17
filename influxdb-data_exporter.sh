@@ -13,6 +13,6 @@ do
           --data-urlencode "q=SELECT \"value\" FROM \"cpu_load_short\" WHERE \"host\"='"$hostname"'"\
           -H "Accept: application/csv" > 'csv/raw/raw-influx('"$hostname"')-data.csv'
   #Removing the first csv's line
-  sed 1d 'csv/raw/raw-influx('"$hostname"')-data.csv' > 'csv/formatted/'"$hostname"'.csv'
+  sed 1d 'csv/raw/raw-influx('"$hostname"')-data.csv' > 'csv/formatted/'"$hostname"''
 done
 echo "InfluxDB data correctly formatted to CSV normalisation."
