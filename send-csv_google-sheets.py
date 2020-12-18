@@ -91,13 +91,13 @@ def main():
                 if sheet['properties']['title'] == sheet_name:
                     return sheet['properties']['sheetId']
 
-    # upload
+    #Loading credentials
     with open(token_path, 'rb') as token:
         credentials = pickle.load(token)
 
-    #For each file create sheet if there is not one and push data into it
+    #For each files in csv/formatted create sheet if there is not one and push data into it
     for filename in os.listdir(csv_base_path):
-        #Setting range to write in sheet
+        #Setting range of box to consider in sheet
         range = filename + "!A2:D"
         #Setting CSV path with base + hostname
         csv_path = csv_base_path + filename
