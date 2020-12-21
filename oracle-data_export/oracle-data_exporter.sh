@@ -17,9 +17,13 @@ echo -e "SET PAGESIZE 0\n SET FEEDBACK OFF\n $sql" | \
 oracle-data_export/instantclient_19_6/sqlplus.exe -S -L "$ORACLE_USERNAME/$ORACLE_PASSWORD@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=$ORACLE_HOST)(PORT=$ORACLE_PORT))(CONNECT_DATA=(SERVICE_NAME=$ORACLE_DATABASE)))" > csv/raw/raw-oracle-data.csv
 
 #Put commas instead of spaces in CSV
-sed -e 's/\s\+/,/g' csv/raw/raw-oracle-data.csv > csv/formatted/oracle
+sed -e 's/\s\+/,/g' csv/raw/raw-oracle-data.csv > csv/raw/temp-oracle-data
+#Add "Etiquette" to each lines
+sed 's/^/,Moy_Ram/' csv/raw/temp-oracle-data > csv/raw/raw-oracle-data.csv
+#Add "Cible" to each lines
+sed 's/^/,u3recu111/' csv/raw/raw-oracle-data.csv > csv/raw/temp-oracle-data
 #Add dates to CSV
-cat csv/formatted/oracle | xargs -d"\n" -I {} date +"%Y-%m-%d {}" -d ",Ram Usage," > csv/raw/raw-oracle-data.csv
-#Removing first csv line
-sed 1d csv/raw/raw-oracle-data.csv >> csv/formatted/Capa-Oracle
+cat csv/raw/temp-oracle-data | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> csv/formatted/Capa-Oracle
+#Removing the temp file
+rm csv/raw/temp-oracle-data
 echo "Oracle data correctly formatted to CSV normalisation."

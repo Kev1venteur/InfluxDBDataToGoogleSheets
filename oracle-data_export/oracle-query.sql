@@ -1,6 +1,6 @@
 -- This file must end in a new line.
 --set heading off
-select round(max(max_value)) as max, round(avg(avg_value)) as avg
+select round(avg(avg_value)) as avg
 from sysman.gc$metric_values_daily
 where metric_group_name = 'Load'
 and metric_column_name = 'usedLogicalMemoryPct'
