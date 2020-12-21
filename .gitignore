@@ -1,6 +1,8 @@
 *.pem
 *.json
-csv/*
+csv/raw/*
+csv/formatted/*
+csv/temboard-hostnames.csv
 *.env
 *.pickle
 *.cookie
