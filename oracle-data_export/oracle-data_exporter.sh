@@ -19,7 +19,7 @@ oracle-data_export/instantclient_19_6/sqlplus.exe -S -L "$ORACLE_USERNAME/$ORACL
 #Put commas instead of spaces in CSV
 sed -e 's/\s\+/,/g' csv/raw/raw-oracle-data.csv > csv/formatted/oracle
 #Add dates to CSV
-cat csv/formatted/oracle | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> csv/raw/raw-oracle-data.csv
+cat csv/formatted/oracle | xargs -d"\n" -I {} date +"%Y-%m-%d {}" -d ",Ram Usage," > csv/raw/raw-oracle-data.csv
 #Removing first csv line
-sed 1d csv/raw/raw-oracle-data.csv > csv/formatted/oracle
+sed 1d csv/raw/raw-oracle-data.csv >> csv/formatted/Capa-Oracle
 echo "Oracle data correctly formatted to CSV normalisation."
