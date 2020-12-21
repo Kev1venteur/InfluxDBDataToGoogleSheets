@@ -10,15 +10,35 @@ do
         --data-urlencode "db=metrologie"\
         --data-urlencode "q=SELECT MEAN(*) FROM \"syst-metro-linux-cpu\" WHERE \"host\"='"$hostname"' AND \"time\">'"$last_month_date"' AND \"time\"<'"$current_date"'"\
         -H "Accept: application/csv" > 'csv/raw/raw-influx('"$hostname"')-data.csv'
-  #Removing the first, third and fourth csv line getting only the Mean cpu idle
-  sed -e '1d' 'csv/raw/raw-influx('"$hostname"')-data.csv' | cut -d , -f4 | sed 's/^/'"$current_date"','"$hostname"',CPU_Inutilisé (%), /' >> 'csv/formatted/Capa-Postgre'
+  #CPU formatting and calculation
+  float=$(sed -e '1d' 'csv/raw/raw-influx('"$hostname"')-data.csv' | cut -d , -f4)
+  #Operation to get used CPU and not free CPU
+  #Convert float to int
+  int=${float%.*}
+  result=$((100 - $int))
+  echo $result > 'csv/raw/raw-influx('"$hostname"')-data.csv'
+  #Formatting for sheet and putting into formatted folder
+  sed 's/^/'"$current_date"','"$hostname"',CPU_Used (%),/' 'csv/raw/raw-influx('"$hostname"')-data.csv' >> 'csv/formatted/Capa-Postgre'
 
   #Calling InfluxDB API for memory
   curl -sS -G 'http://metrologie-influxdb-rec.recgroupement.systeme-u.fr:8086/query?pretty=true'\
         --data-urlencode "db=metrologie"\
         --data-urlencode "q=SELECT MEAN(*) FROM \"syst-metro-linux-mem\" WHERE \"host\"='"$hostname"' AND \"time\">'"$last_month_date"' AND \"time\"<'"$current_date"'"\
         -H "Accept: application/csv" > 'csv/raw/raw-influx('"$hostname"')-data.csv'
-  #Removing the first, third and fourth csv line and throw the result in formatted file
-  sed -e '1d' 'csv/raw/raw-influx('"$hostname"')-data.csv' | cut -d , -f5 | sed 's/^/'"$current_date"','"$hostname"',Moy_RAM_Libre (Octets), /' >> 'csv/formatted/Capa-Postgre'
+  #Ram formating and calculation
+  mem_free=$(sed -e '1d' 'csv/raw/raw-influx('"$hostname"')-data.csv' | cut -d , -f6)
+  mem_total=$(sed -e '1d' 'csv/raw/raw-influx('"$hostname"')-data.csv' | cut -d , -f8)
+  mem_free=${mem_free%.*}
+  mem_total=${mem_total%.*}
+  mem_used=$(($mem_total - $mem_free))
+  result=$(($mem_used * 100 / $mem_total))
+  echo $result > 'csv/raw/raw-influx('"$hostname"')-data.csv'
+  sed 's/^/'"$current_date"','"$hostname"',RAM_Used (%),/' 'csv/raw/raw-influx('"$hostname"')-data.csv' >> 'csv/formatted/Capa-Postgre'
+  echo ""$current_date","$hostname",Plan_Action," >> 'csv/formatted/Capa-Postgre'
+
+  curl -sS -G 'http://metrologie-influxdb-rec.recgroupement.systeme-u.fr:8086/query?pretty=true'\
+        --data-urlencode "db=metrologie"\
+        --data-urlencode "q=SELECT MEAN(*) FROM \"syst-metro-linux-mem\" WHERE \"host\"='"$hostname"' AND \"time\">'"$last_month_date"' AND \"time\"<'"$current_date"'"\
+        -H "Accept: application/csv" > 'csv/raw/raw-influx('"$hostname"')-data.csv'
 done
 echo "InfluxDB data correctly formatted to CSV normalisation."
