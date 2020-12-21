@@ -1,6 +1,8 @@
 #!/bin/bash
 #Login and keep session cookie
 curl -s -c credentials/temboard.cookie -d 'username=admin&password=Alex3Pont9' -k https://u3recu523:8888/login > /dev/null
+#Remove all existing CSV files
+rm csv/*
 #Getting HTML page containing all the hostnames in a CSV
 curl -s -b credentials/temboard.cookie -k https://u3recu523:8888/settings/instances > csv/raw/raw-temboard-data.csv
 #Formatting CSV to only get hostnames (only getting lines starting with <td> and ending with </td>)
