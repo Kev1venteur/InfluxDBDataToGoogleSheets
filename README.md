@@ -4,8 +4,8 @@ The script : </br>
   1 - Get HTML hostnames page from Temboard via CURL requests; </br>
   2 - Format received HTML pages to only get hostnames; </br>
   3 - Call InfluxDB with hostnames; </br>
-  4 -  Format InfluxDB CSV result to only get "mean last month CPU usage" and "mean last month RAM usage"; </br>
-  5 - Call Oracle database to get ram usage (part to improve); </br>
+  4 - Format InfluxDB CSV result to only get "mean last month CPU usage" and "mean last month RAM usage"; </br>
+  5 - Call Oracle database to get Ram, CPU and Disk usage; </br>
   6 - Format result returned by oracle; </br>
   7 - Send formatted CSVs to googlesheet; </br>
 
