@@ -3,6 +3,11 @@
 # Load database connection info
 source oracle-data_export/.env
 
+# Export hostnames from cloud control
+sqlhost="$(cat oracle-data_export/oracle-query-hostnames.sql)"
+echo -e "SET PAGESIZE 0\n SET FEEDBACK OFF\n $sqlhost" | \
+oracle-data_export/instantclient_19_6/sqlplus.exe -S -L "$ORACLE_USERNAME/$ORACLE_PASSWORD@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=$ORACLE_HOST)(PORT=$ORACLE_PORT))(CONNECT_DATA=(SERVICE_NAME=$ORACLE_DATABASE)))" > csv/oracle-hostnames.csv
+
 # Read queries into variables
 sqlram="$(cat oracle-data_export/oracle-query-ram.sql)"
 sqlcpu="$(cat oracle-data_export/oracle-query-cpu.sql)"

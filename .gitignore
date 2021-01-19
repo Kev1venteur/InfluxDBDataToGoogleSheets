@@ -3,6 +3,7 @@
 csv/raw/*
 csv/formatted/*
 csv/temboard-hostnames.csv
+csv/oracle-hostnames.csv
 *.env
 *.pickle
 *.cookie

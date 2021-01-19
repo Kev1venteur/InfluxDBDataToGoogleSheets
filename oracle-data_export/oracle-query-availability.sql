@@ -11,7 +11,7 @@ SELECT
 GROUP BY A.target_name,A.AVAILABILITY_STATUS ORDER BY A.target_name;
 
 
--- 1 requete � l'ann�e
+-- 1 requete à l'année
 -- 1 requ�te au mois
 
 
@@ -21,5 +21,5 @@ deptno) DEPT_COUNT
 FROM emp
 WHERE deptno IN (20, 30);
 
--- - de 60% de up sur la totalit� => base non prise en compte
--- + indiquer les bases en �cart
+-- - de 60% de up sur la totalité => base non prise en compte
+-- + indiquer les bases en écart
