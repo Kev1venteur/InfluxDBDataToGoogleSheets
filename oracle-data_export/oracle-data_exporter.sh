@@ -23,13 +23,13 @@ fi
 #Sed replaces spaces by commas and add etiquettes
 
 echo -e "SET PAGESIZE 0\n SET FEEDBACK OFF\n $sqlram" | \
-oracle-data_export/instantclient_19_6/sqlplus.exe -S -L "$ORACLE_USERNAME/$ORACLE_PASSWORD@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=$ORACLE_HOST)(PORT=$ORACLE_PORT))(CONNECT_DATA=(SERVICE_NAME=$ORACLE_DATABASE)))" | sed -e 's/\s\+/,/g' | sed 's/^/,Moy_RAM/'> csv/raw/raw-oracle-data.csv
+oracle-data_export/instantclient_19_6/sqlplus.exe -S -L "$ORACLE_USERNAME/$ORACLE_PASSWORD@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=$ORACLE_HOST)(PORT=$ORACLE_PORT))(CONNECT_DATA=(SERVICE_NAME=$ORACLE_DATABASE)))" | sed -e 's/\s\+/,/g' | sed 's/^/,Ram_Used (%)/'> csv/raw/raw-oracle-data.csv
 
 echo -e "SET PAGESIZE 0\n SET FEEDBACK OFF\n $sqlcpu" | \
-oracle-data_export/instantclient_19_6/sqlplus.exe -S -L "$ORACLE_USERNAME/$ORACLE_PASSWORD@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=$ORACLE_HOST)(PORT=$ORACLE_PORT))(CONNECT_DATA=(SERVICE_NAME=$ORACLE_DATABASE)))" | sed -e 's/\s\+/,/g' | sed 's/^/,Moy_CPU/' >> csv/raw/raw-oracle-data.csv
+oracle-data_export/instantclient_19_6/sqlplus.exe -S -L "$ORACLE_USERNAME/$ORACLE_PASSWORD@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=$ORACLE_HOST)(PORT=$ORACLE_PORT))(CONNECT_DATA=(SERVICE_NAME=$ORACLE_DATABASE)))" | sed -e 's/\s\+/,/g' | sed 's/^/,CPU_Used (%)/' >> csv/raw/raw-oracle-data.csv
 
 echo -e "SET PAGESIZE 0\n SET FEEDBACK OFF\n $sqldisk" | \
-oracle-data_export/instantclient_19_6/sqlplus.exe -S -L "$ORACLE_USERNAME/$ORACLE_PASSWORD@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=$ORACLE_HOST)(PORT=$ORACLE_PORT))(CONNECT_DATA=(SERVICE_NAME=$ORACLE_DATABASE)))" | sed -e 's/\s\+/,/g' | sed 's/^/,Moy_Disk/' >> csv/raw/raw-oracle-data.csv
+oracle-data_export/instantclient_19_6/sqlplus.exe -S -L "$ORACLE_USERNAME/$ORACLE_PASSWORD@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=$ORACLE_HOST)(PORT=$ORACLE_PORT))(CONNECT_DATA=(SERVICE_NAME=$ORACLE_DATABASE)))" | sed -e 's/\s\+/,/g' | sed 's/^/,Disk_Used (%)/' >> csv/raw/raw-oracle-data.csv
 
 #Add "Cible" to each lines
 sed 's/^/,u3recu111/' csv/raw/raw-oracle-data.csv > csv/raw/temp-oracle-data
