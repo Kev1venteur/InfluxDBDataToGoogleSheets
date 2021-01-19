@@ -1,5 +1,14 @@
 # InfluxDBDataToGoogleSheets
-:key: This project goal is to automate enterprise reporting, by formatting InfluxDB data into google spreadsheet, to be used with datastudio
+:key: This project goal is to automate enterprise reporting, by formatting InfluxDB data into google spreadsheet, to be used with datastudio.
+The script :
+  1/ Get HTML hostnames page from Temboard via CURL requests;
+  2/ Format received HTML pages to only get hostnames;
+  3/ Call InfluxDB with hostnames;
+  4/ Format InfluxDB CSV result to only get "mean last month CPU usage" and "mean last month RAM usage";
+  5/ Call Oracle database to get ram usage (part to improve);
+  6/ Format result returned by oracle;
+  7/ Send formatted CSVs to googlesheet;
+  
 ## How to Start
 ```
 git clone https://github.com/Kev1venteur/InfluxDBDataToGoogleSheets.git
