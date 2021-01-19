@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Load database connection info
-source oracle-data_export/.env
+source credentials/oracle.env
 
 # Export hostnames from cloud control
 sqlhost="$(cat oracle-data_export/oracle-query-hostnames.sql)"

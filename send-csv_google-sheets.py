@@ -95,7 +95,7 @@ def main():
     with open(token_path, 'rb') as token:
         credentials = pickle.load(token)
 
-    #For each files in csv/formatted create sheet if there is not one and push data into it
+    #For each files in csv/formatted push into sheet with same name (bug if sheet name does not exist)
     for filename in os.listdir(csv_base_path):
         #Setting range of box to consider in sheet
         range = filename + "!A2:D"

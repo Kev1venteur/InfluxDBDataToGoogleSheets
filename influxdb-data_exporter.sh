@@ -1,4 +1,12 @@
 #!/bin/bash
+#Prompt for influxdb API username and password
+read -p "Enter InfluxDB API Username: " temuser
+echo
+read -s -p "Enter InfluxDB API Password: " tempass
+echo
+echo
+echo "Exportation des données d'InfluxDB..."
+
 #Setting dates to set request timestamp
 current_date=$(date +'%Y-%m-%d')
 last_month_date=$(date -d "$date -1 months" +"%Y-%m-%d")
@@ -7,6 +15,8 @@ cat csv/temboard-hostnames.csv | while read hostname
 do
   #Calling InfluxDB API for CPU (can be executed in one request CPU + RAM, but in two the post-process is faster)
   curl -sS -G 'http://metrologie-influxdb-rec.recgroupement.systeme-u.fr:8086/query?pretty=true'\
+        --data-urlencode "u=$temuser"\
+        --data-urlencode "p=$tempass"\
         --data-urlencode "db=metrologie"\
         --data-urlencode "q=SELECT MEAN(*) FROM \"syst-metro-linux-cpu\" WHERE \"host\"='"$hostname"' AND \"time\">'"$last_month_date"' AND \"time\"<'"$current_date"'"\
         -H "Accept: application/csv" > 'csv/raw/raw-influx('"$hostname"')-data.csv'
@@ -28,6 +38,8 @@ do
 
   #Calling InfluxDB API for memory
   curl -sS -G 'http://metrologie-influxdb-rec.recgroupement.systeme-u.fr:8086/query?pretty=true'\
+        --data-urlencode "u=$temuser"\
+        --data-urlencode "p=$tempass"\
         --data-urlencode "db=metrologie"\
         --data-urlencode "q=SELECT MEAN(*) FROM \"syst-metro-linux-mem\" WHERE \"host\"='"$hostname"' AND \"time\">'"$last_month_date"' AND \"time\"<'"$current_date"'"\
         -H "Accept: application/csv" > 'csv/raw/raw-influx('"$hostname"')-data.csv'
