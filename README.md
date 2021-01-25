@@ -14,20 +14,27 @@ The script : </br>
 git clone https://github.com/Kev1venteur/InfluxDBDataToGoogleSheets.git
 ```
 
-## How to set things up
-:pencil2: Edit your Sheets infos in [this file](send-csv_google-sheets.py#L9). </br></br>
+## How to set scripts
+:pencil2: Edit your Sheets ID in [this file](send-csv_google-sheets.py#L9). </br></br>
 :pencil2: If you have a proxy, refer to [this file](launcher.sh#L7). </br>
 
-## How to Launch
-:pushpin: Don't forget to change the fields that needs to be modified in the scripts. </br></br>
-:pushpin: Install the Google Client Library :
+## How to set environment
+:pushpin: Install the Google Client Library with pip:
 ``` sh
 pip install --trusted-host pypi.python.org --trusted-host files.pythonhosted.org --trusted-host pypi.org --upgrade requests-toolbelt google-api-python-client google-auth-httplib2 google-auth-oauthlib gspread certifi urllib3
 ```
-:pushpin: Turn on the Google Sheets API from this page : https://developers.google.com/sheets/api/quickstart/python </br>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :point_right: In resulting dialog click DOWNLOAD CLIENT CONFIGURATION and save the file credentials.json to your working directory.</br></br>
-:pushpin: Turn on the Google Drive API from this page : https://developers.google.com/drive/api/v3/quickstart/python </br></br>
-:pushpin: Just install [Python](https://www.python.org/downloads/) (Tested version 3.9.1) and execute [The Launcher bash script](launcher.sh). </br>
+:pushpin: Create a project and turn on the Google Sheets API from this [page](https://developers.google.com/sheets/api/quickstart/python). (only use the button of the step 1) </br></br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :point_right: In resulting dialog you DO NOT NEED to download client configuration.json</br></br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :point_right: Now that you have created the project and activated the SPREADSHEET API, you need to enable the DRIVE one. (to work with gspread)</br></br>
+:pushpin: Turn on the Google Drive API from this [page](https://console.developers.google.com/apis/library/drive.googleapis.com?q=drive). </br></br>
+:pushpin: Create a service account from [here](https://console.developers.google.com/iam-admin/serviceaccounts). (to work on headless servers)</br></br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :point_right: Step 1 : Give the name you want to the account.</br></br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :point_right: Step 2 : Set the role as "Basic - Editor".</br></br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :point_right: Step 3 : Skip it.</br></br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :point_right: On the service account create a KEY at json format and download it.</br></br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :point_right: Rename your key as "service.json" and put it in the "credentials" folder of the project.</br></br>
+:pushpin: Share your spreadsheet with the service account email as editor.</br></br>
+:pushpin: Install [Python](https://www.python.org/downloads/) (Tested version 3.9.1) and execute [The Launcher bash script](launcher.sh). </br>
 
 ## Examples
 Environment: Using InfluxDB Docker container as datasource
@@ -40,14 +47,11 @@ docker pull influxdb
 #Start the container
 docker run --name=influxdb -d -p 8086:8086 influxdb
 
-#Get a shell in the container
-docker exec -it influxdb bash
-
 #--------------------Database Managment----------------------#
 #Create DB via http
 curl -i -XPOST http://localhost:8086/query --data-urlencode "q=CREATE DATABASE mydb"
 
-#White data into db
+#Write data into db
 curl -i -XPOST 'http://localhost:8086/write?db=mydb' --data-binary 'cpu_load_short,host=server01,region=us-west value=0.64 1434055562000000000'
 
 #Export data to CSV

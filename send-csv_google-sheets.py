@@ -2,6 +2,7 @@ from __future__ import print_function
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
+from google.oauth2 import service_account
 import pickle
 import gspread
 import os
@@ -20,27 +21,13 @@ token_path = 'credentials/token.pickle'
 creds_file_path = 'credentials/credentials.json'
 
 def main():
-    creds = None
-    # The file token.pickle stores the user's access and refresh tokens, and is
-    # created automatically when the authorization flow completes for the first
-    # time.
-    if os.path.exists(token_path):
-        with open(token_path, 'rb') as token:
-            creds = pickle.load(token)
-    # If there are no (valid) credentials available, let the user log in.
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
-            flow = InstalledAppFlow.from_client_secrets_file(
-                creds_file_path, SCOPES)
-            creds = flow.run_local_server(port=0)
-        # Save the credentials for the next run
-        with open(token_path, 'wb') as token:
-            pickle.dump(creds, token)
+    #Creating creds with service account, the service.json key and the affected scopes
+    creds = service_account.Credentials.from_service_account_file('credentials/service.json', scopes=SCOPES)
 
+    #Building service with API type, version, and creds
     service = build('sheets', 'v4', credentials=creds)
 
+    #Push your CSV to sheet identified by it's ID, in a defined range 
     def push_csv_to_gsheet(csv_path, sheet_id, range):
         #Get last filled row to insert after it
         rows = service \
@@ -91,15 +78,11 @@ def main():
                 if sheet['properties']['title'] == sheet_name:
                     return sheet['properties']['sheetId']
 
-    #Loading credentials
-    with open(token_path, 'rb') as token:
-        credentials = pickle.load(token)
-
     #For each files in csv/formatted push into sheet with same name (bug if sheet name does not exist)
     for filename in os.listdir(csv_base_path):
         #Setting range of box to consider in sheet
         range = filename + "!A2:D"
-        #Setting CSV path with base + hostname
+        #Setting CSV path with base path + hostname
         csv_path = csv_base_path + filename
         #Pushing data to sheet
         push_csv_to_gsheet(
