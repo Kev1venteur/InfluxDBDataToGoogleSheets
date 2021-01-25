@@ -14,11 +14,11 @@ The script : </br>
 git clone https://github.com/Kev1venteur/InfluxDBDataToGoogleSheets.git
 ```
 
-## How to set things up
+## How to set scripts
 :pencil2: Edit your Sheets ID in [this file](send-csv_google-sheets.py#L9). </br></br>
 :pencil2: If you have a proxy, refer to [this file](launcher.sh#L7). </br>
 
-## How to Launch
+## How to set environment
 :pushpin: Install the Google Client Library with pip:
 ``` sh
 pip install --trusted-host pypi.python.org --trusted-host files.pythonhosted.org --trusted-host pypi.org --upgrade requests-toolbelt google-api-python-client google-auth-httplib2 google-auth-oauthlib gspread certifi urllib3
