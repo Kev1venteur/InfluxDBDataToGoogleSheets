@@ -1,6 +1,6 @@
 #!/bin/bash
 # Connect to PostgreSQL DB and launch query - store result in csv
-psql -h test -U username -d mydatabase -c 'SELECT * FROM mytable' > csv/temboard-hostnames.csv
+psql -h u3recu523 -U username -d mydatabase -c 'show tables;' > csv/temboard-hostnames.csv
 
 
 # #Login and keep session cookie
