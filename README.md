@@ -24,7 +24,7 @@ git clone https://github.com/Kev1venteur/InfluxDBDataToGoogleSheets.git
 ``` sh
 pip install --trusted-host pypi.python.org --trusted-host files.pythonhosted.org --trusted-host pypi.org --upgrade requests-toolbelt google-api-python-client google-auth-httplib2 google-auth-oauthlib gspread certifi urllib3
 ```
-:pushpin: Turn on the Google Sheets API from this page : https://developers.google.com/sheets/api/quickstart/python </br>
+:pushpin: Turn on the Google Sheets API from this [page](https://developers.google.com/sheets/api/quickstart/python) </br>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :point_right: In resulting dialog you DO NOT NEED to download client configuration.json</br></br>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :point_right: Now that you have created the project and activated the SPREADSHEET API, you need to enable the DRIVE one. (to work with gspread)</br></br>
 :pushpin: Turn on the Google Drive API from this [page](https://console.developers.google.com/apis/library/drive.googleapis.com?q=drive) </br></br>
