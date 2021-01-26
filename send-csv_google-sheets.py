@@ -17,8 +17,6 @@ SCOPES = ['https://www.googleapis.com/auth/spreadsheets',
           'https://www.googleapis.com/auth/drive']
 
 csv_base_path = 'csv/formatted/'
-token_path = 'credentials/token.pickle'
-creds_file_path = 'credentials/credentials.json'
 
 def main():
     #Creating creds with service account, the service.json key and the affected scopes
