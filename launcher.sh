@@ -40,7 +40,7 @@ echo
 #Call python script to write csv data to google spreadsheet
 echo
 echo "Sending all data to Google Sheets..."
-./loading-animation.sh python.exe send-csv_google-sheets.py
+./loading-animation.sh python send-csv_google-sheets.py
 
 #Pause to see the terminal log
 echo
