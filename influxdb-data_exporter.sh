@@ -5,6 +5,9 @@ influxpass=$(sed -n -e 2p credentials/influx.creds)
 echo
 echo "Exportation des données d'InfluxDB..."
 
+#removing all old raw files
+rm csv/raw/*
+
 #Setting dates to set request timestamp
 current_date=$(date +'%Y-%m-%d')
 last_month_date=$(date -d "$date -1 months" +"%Y-%m-%d")
