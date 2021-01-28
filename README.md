@@ -1,7 +1,7 @@
 # InfluxDBDataToGoogleSheets
 :key: This project goal is to automate enterprise reporting, by formatting InfluxDB data into google spreadsheet, to be used with datastudio. </br></br>
 The script : </br>
-  &nbsp;&nbsp;&nbsp;&nbsp;1 - Get HTML hostnames page from Temboard via CURL requests; </br>
+  &nbsp;&nbsp;&nbsp;&nbsp;1 - Get hostnames from temboard PostgreSQL database; </br>
   &nbsp;&nbsp;&nbsp;&nbsp;2 - Format received HTML pages to only get hostnames; </br>
   &nbsp;&nbsp;&nbsp;&nbsp;3 - Call InfluxDB with hostnames; </br>
   &nbsp;&nbsp;&nbsp;&nbsp;4 - Format InfluxDB CSV result to only get "mean last month CPU usage" and "mean last month RAM usage"; </br>

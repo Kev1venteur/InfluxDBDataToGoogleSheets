@@ -20,7 +20,7 @@ export https_proxy="http://127.0.0.1:9000"
 #Call bash script to export hostnames of postgresql servers from temboard via HTTP
 echo "Getting hostnames from temboard..."
 echo
-./temboard-hostnames_exporter.sh
+./temboard_db-hostnames_exporter.sh
 echo
 
 #Call bash script to export InfluxDB data to CSV via HTTP API
