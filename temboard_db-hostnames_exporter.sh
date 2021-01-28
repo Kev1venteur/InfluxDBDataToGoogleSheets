@@ -1,18 +1,13 @@
 #!/bin/bash
+#Prompt for temboard database username and password
+temuser=$(sed -n -e 1p credentials/temboard.creds)
+tempass=$(sed -n -e 2p credentials/temboard.creds)
+echo
+echo "Exportation des hostnames de la base temboard..."
+
+# Export env password variable
+export PGPASSWORD=$tempass
 # Connect to PostgreSQL DB and launch query - store result in csv
-psql -h u3recu523 -U username -d mydatabase -c 'show tables;' > csv/temboard-hostnames.csv
+psql -h u3recu523 -U postgres -p 5433 -d temboard -c 'SELECT hostname FROM monitoring.hosts;' | grep 'u3' > csv/temboard-hostnames.csv
 
-
-# #Login and keep session cookie
-# curl -s -c credentials/temboard.cookie -d 'username=admin&password=Alex3Pont9' -k https://u3recu523:8888/login > /dev/null
-# #Remove all existing CSV files
-# rm -rf csv/raw/* && rm -rf csv/formatted/*
-# #Getting HTML page containing all the hostnames in a CSV
-# curl -s -b credentials/temboard.cookie -k https://u3recu523:8888/settings/instances > csv/raw/raw-temboard-data.csv
-# #Formatting CSV to only get hostnames (only getting lines starting with <td> and ending with </td>)
-# sed -n 's/<td>\(.*\)<\/td>/\1/Ip' csv/raw/raw-temboard-data.csv > csv/raw/raw-temboard2-data.csv
-# #Only getting lines ending by ".fr"
-# cat csv/raw/raw-temboard2-data.csv | grep '\.fr$' > csv/temboard-hostnames.csv
-# #Delete the temp file
-# rm csv/raw/raw-temboard2-data.csv
 echo "Temboard hostnames succesfully exported."
