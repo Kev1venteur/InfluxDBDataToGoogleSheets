@@ -3,7 +3,6 @@
 temuser=$(sed -n -e 1p credentials/temboard.creds)
 tempass=$(sed -n -e 2p credentials/temboard.creds)
 echo
-echo "Exportation des hostnames de la base temboard..."
 
 # Export env password variable
 export PGPASSWORD=$tempass
