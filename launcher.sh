@@ -25,9 +25,11 @@ echo
 
 #Call bash script to export InfluxDB data to CSV via HTTP API
 echo
+source influxdb-data_exporter.sh
 echo "Getting data from InfluxDB..."
 echo
-./influxdb-data_exporter.sh
+influxExport "rec"
+influxExport "prod"
 echo
 
 #Call bash script to export Oracle data to CSV via SQL request
