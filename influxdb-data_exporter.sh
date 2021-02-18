@@ -61,6 +61,7 @@ function influxExport () {
     echo "InfluxDB data correctly formatted to CSV normalisation."
   }
 
+  #Block to set variables before code and avoid code repetition
   if [[ "$1" == "rec" ]]
   then
     influxuser=$(sed -n -e 1p credentials/influx-rec.creds)
@@ -79,6 +80,16 @@ function influxExport () {
     influxURL="http://metrologie-influxdb-prod.groupement.systeme-u.fr:8086/query?pretty=true"
     echo
     echo "Influx prod export..."
+    launchExport
+
+  elif [[ "$1" == "dev" ]]
+  then
+    influxuser=$(sed -n -e 1p credentials/influx-prod.creds)
+    influxpass=$(sed -n -e 2p credentials/influx-prod.creds)
+    csvHostnamesPath="csv/dev-temboard-hostnames.csv"
+    influxURL="http://metrologie-influxdb-prod.groupement.systeme-u.fr:8086/query?pretty=true"
+    echo
+    echo "Influx dev export..."
     launchExport
 
   else
