@@ -26,17 +26,22 @@ def main():
     service = build('sheets', 'v4', credentials=creds)
 
     #Push your CSV to sheet identified by it's ID, in a defined range 
-    def push_csv_to_gsheet(csv_path, sheet_id, range):
-        #Get last filled row to insert after it
-        rows = service \
-            .spreadsheets() \
-            .values() \
-            .get(spreadsheetId=SPREADSHEET_ID, range=range) \
-            .execute() \
-            .get('values', [])
-        range_prefix = range
-        last_row = rows[-1] if rows else None
-        last_row_id = len(rows) + 1
+    def push_csv_to_gsheet(csv_path, sheet_id, range, isHeader):
+
+        #Set the default row id to the first line
+        last_row_id = 0
+        #If the CSV is not a header, change the row id to the last line of the file
+        if isHeader == 0:
+            #Get last filled row to insert after it
+            rows = service \
+                .spreadsheets() \
+                .values() \
+                .get(spreadsheetId=SPREADSHEET_ID, range=range) \
+                .execute() \
+                .get('values', [])
+            range_prefix = range
+            last_row = rows[-1] if rows else None
+            last_row_id = len(rows) + 1
 
         with open(csv_path, 'r') as csv_file:
             csvContents = csv_file.read()
@@ -59,7 +64,9 @@ def main():
             .spreadsheets() \
             .batchUpdate(spreadsheetId=SPREADSHEET_ID, body=body)
 
+        #Write data after the last line of the file
         request.InsertDataOption = "INSERT_ROWS"
+
         response = request.execute()
         return response
 
@@ -75,18 +82,45 @@ def main():
             if 'title' in sheet['properties'].keys():
                 if sheet['properties']['title'] == sheet_name:
                     return sheet['properties']['sheetId']
+    
+    def insert_sheet(sheet_name):
+        new_sheet = {
+            'requests': [{
+                'addSheet': {
+                    'properties': {
+                        'title': sheet_name,
+                    }
+                }
+            }]
+        }
+        request = service \
+            .spreadsheets() \
+            .batchUpdate(spreadsheetId=SPREADSHEET_ID, body=new_sheet)
 
-    #For each files in csv/formatted push into sheet with same name (bug if sheet name does not exist)
+        request.execute()
+
+    #For each files in csv/formatted
     for filename in os.listdir(csv_base_path):
         #Setting range of box to consider in sheet
         range = filename + "!A2:D"
+        #Define sheet id
+        sheet_id=find_sheet_id_by_name(filename)
+        #If returned sheet id is None (null) create sheet by with title equal as filename
+        if sheet_id is None:
+            insert_sheet(filename)
+            #Sheet id become id of the newly created sheet
+            sheet_id = find_sheet_id_by_name(filename)
+            #Add header at first line of the sheet
+            push_csv_to_gsheet(csv_path="csv/header",sheet_id=sheet_id,range=range,isHeader=1)
+            
         #Setting CSV path with base path + hostname
         csv_path = csv_base_path + filename
         #Pushing data to sheet
         push_csv_to_gsheet(
             csv_path=csv_path,
-            sheet_id=find_sheet_id_by_name(filename),
-            range=range
+            sheet_id=sheet_id,
+            range=range,
+            isHeader=0
         )
         continue
 

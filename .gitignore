@@ -2,8 +2,8 @@
 *.json
 csv/raw/*
 csv/formatted/*
-csv/*-hostnames.csv
-credentials/*
+csv/*.csv
+*.creds
 *.env
 *.pickle
 *.cookie

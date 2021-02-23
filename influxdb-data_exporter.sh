@@ -29,7 +29,7 @@ function influxExport () {
         result=$((100 - $int))
         echo $result > 'csv/raw/raw-influx('$hostname')-data.csv'
         #Formatting for sheet and putting into formatted folder
-        sed 's/^/'"$current_date"','"$hostname"',CPU_Used (%),/' 'csv/raw/raw-influx('"$hostname"')-data.csv' >> 'csv/formatted/Capa-Postgre'
+        sed 's/^/'"$current_date"','$1','"$hostname"',CPU_Used (%),/' 'csv/raw/raw-influx('"$hostname"')-data.csv' >> 'csv/formatted/Capa-Postgre'
       else
         echo "No CPU infos of '"$hostname"' has been returned from InfluxDB"
       fi
@@ -52,8 +52,8 @@ function influxExport () {
         mem_used=$(($mem_total - $mem_free))
         result=$(($mem_used * 100 / $mem_total))
         echo $result > 'csv/raw/raw-influx('"$hostname"')-data.csv'
-        sed 's/^/'"$current_date"','"$hostname"',RAM_Used (%),/' 'csv/raw/raw-influx('"$hostname"')-data.csv' >> 'csv/formatted/Capa-Postgre'
-        echo ""$current_date","$hostname",Plan_Action," >> 'csv/formatted/Capa-Postgre'
+        sed 's/^/'"$current_date"','$1','"$hostname"',RAM_Used (%),/' 'csv/raw/raw-influx('"$hostname"')-data.csv' >> 'csv/formatted/Capa-Postgre'
+        echo ""$current_date","$1","$hostname",Plan_Action," >> 'csv/formatted/Capa-Postgre'
       else
         echo "No RAM infos of '"$hostname"' has been returned from InfluxDB"
       fi
@@ -70,7 +70,7 @@ function influxExport () {
     influxURL="http://metrologie-influxdb-rec.recgroupement.systeme-u.fr:8086/query?pretty=true"
     echo
     echo "Influx rec export..."
-    launchExport
+    launchExport "Recette"
 
   elif [[ "$1" == "prod" ]]
   then
@@ -80,7 +80,7 @@ function influxExport () {
     influxURL="http://metrologie-influxdb-prod.groupement.systeme-u.fr:8086/query?pretty=true"
     echo
     echo "Influx prod export..."
-    launchExport
+    launchExport "Production"
 
   elif [[ "$1" == "dev" ]]
   then
@@ -90,7 +90,7 @@ function influxExport () {
     influxURL="http://metrologie-influxdb-prod.groupement.systeme-u.fr:8086/query?pretty=true"
     echo
     echo "Influx dev export..."
-    launchExport
+    launchExport "Developpement"
 
   else
     echo "Error, no environement type (rec, dev, prod) specified, exiting..." 
