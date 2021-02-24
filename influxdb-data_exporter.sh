@@ -34,7 +34,7 @@ function influxExport () {
         echo "No CPU infos of '"$hostname"' has been returned from InfluxDB"
       fi
 
-      #Calling InfluxDB API for memory
+      #Calling InfluxDB API for Memory
       curl -sS -G $influxURL\
             --data-urlencode "u=$influxuser"\
             --data-urlencode "p=$influxpass"\
@@ -57,6 +57,42 @@ function influxExport () {
       else
         echo "No RAM infos of '"$hostname"' has been returned from InfluxDB"
       fi
+
+      #Convert hostname to instance name (u3recuXXX to pgsrXXX)
+      if [[ "$1" == "Recette" ]]
+      then
+        #Define hostname separation with "." get the first part, and remove the frist 8 char
+        pgname="pgsr"$(cat 'csv/rec-temboard-hostnames.csv' | grep "$hostname" | cut -d . -f1 | cut -c8-)".recgroupement.systeme-u.fr"
+
+      elif [[ "$1" == "Production" ]]
+      then
+        pgname="pgsr"$(cat 'csv/prod-temboard-hostnames.csv' | grep "$hostname" | cut -d . -f1 | cut -c8-)".groupement.systeme-u.fr"
+
+      elif [[ "$1" == "Developpement" ]]
+      then
+        pgname="pgsr"$(cat 'csv/dev-temboard-hostnames.csv' | grep "$hostname" | cut -d . -f1 | cut -c8-)".groupement.systeme-u.fr"
+
+      else
+        echo "Error, no environement type (rec, dev, prod) specified, exiting..." 
+        exit
+      fi
+
+      #Calling InfluxDB API for Availaibility
+      curl -sS -G $influxURL\
+            --data-urlencode "u=$influxuser"\
+            --data-urlencode "p=$influxpass"\
+            --data-urlencode "db=metrologie"\
+            --data-urlencode "q=SELECT \"postgres\" FROM \"pgsql-stat\" WHERE  \"host\"='"$pgname"' AND \"time\">'"$last_month_date"' AND \"time\"<'"$current_date"' tz('Europe/Paris')"\
+            -H "Accept: application/csv" > 'csv/raw/raw-dispo'$1'-influx('"$hostname"')-data.csv'
+      
+      if [ -s "csv/raw/raw-dispo'$1'-influx('"$hostname"')-data.csv" ]
+      then
+        echo "ok"
+      else
+        echo "No availability infos of '"$pgname"' has been returned from InfluxDB"
+        echo
+      fi
+            
     done
     echo "InfluxDB data correctly formatted to CSV normalisation."
   }
