@@ -2,7 +2,7 @@
 # Prompt for temboard database username and password
 temuser=$(sed -n -e 1p credentials/temboard_rec.creds)
 tempass=$(sed -n -e 2p credentials/temboard_rec.creds)
-echo "Export hostnames rec..."
+echo "Export Temboard hostnames for rec..."
 echo
 
 # Export env password variable
@@ -15,7 +15,7 @@ sed -i '1d;2d;' "csv/raw/raw-rec-temboard-hostnames.csv"
 # Remove the 2 last lines
 head -n -2 "csv/raw/raw-rec-temboard-hostnames.csv" > "csv/rec-temboard-hostnames.csv"
 
-echo "Export hostnames dev..."
+echo "Export Temboard hostnames for dev..."
 echo
 # Connect to Dev-PostgreSQL DB and launch query - store result in csv
 psql -h u3antu505 -U postgres -p 5433 -d temboard -c 'SELECT hostname FROM monitoring.hosts;' > "csv/raw/raw-dev-temboard-hostnames.csv"
@@ -27,7 +27,7 @@ head -n -2 "csv/raw/raw-dev-temboard-hostnames.csv" > "csv/dev-temboard-hostname
 
 temuser=$(sed -n -e 1p credentials/temboard_prod.creds)
 tempass=$(sed -n -e 2p credentials/temboard_prod.creds)
-echo "Export hostnames prod..."
+echo "Export Temboard hostnames for prod..."
 echo
 
 # Export env password variable

@@ -38,9 +38,12 @@ echo
 
 #Call bash script to export Oracle data to CSV via SQL request
 echo
+source oracle-data_export/oracle-data_exporter.sh
 echo "Getting data from Oracle..."
 echo
-./oracle-data_export/oracle-data_exporter.sh
+oracleExport "rec"
+oracleExport "prod"
+oracleExport "dev"
 echo
 
 #Create Header file before sending data if not exixting
