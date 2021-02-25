@@ -19,9 +19,10 @@ export https_proxy="http://127.0.0.1:9000"
 #-----------------------------------------------------------------------------------#
 #Cleaning before starting
 rm csv/formatted/*
+rm csv/raw/*
 
-#Call bash script to export hostnames of postgresql servers from temboard via HTTP
-echo "Getting hostnames from temboard..."
+#Call bash script to export hostnames of postgresql servers from Temboard database
+echo "Getting hostnames from Temboard..."
 echo
 ./temboard_db-hostnames_exporter.sh
 echo
@@ -34,6 +35,12 @@ echo
 influxExport "rec"
 influxExport "prod"
 influxExport "dev"
+echo
+
+#Call bash script to export hostnames of oracle servers from CloudControl database
+echo "Getting hostnames from Oracle..."
+echo
+./oracle-data_export/oracle_db-hostname_exporter.sh
 echo
 
 #Call bash script to export Oracle data to CSV via SQL request
