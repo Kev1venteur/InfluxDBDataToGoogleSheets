@@ -48,8 +48,8 @@ echo
 source oracle-data_export/oracle-data_exporter.sh
 echo "Getting data from Oracle..."
 echo
-oracleExport "rec"
 oracleExport "prod"
+oracleExport "rec"
 oracleExport "dev"
 echo
 
