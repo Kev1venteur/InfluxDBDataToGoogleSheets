@@ -2,12 +2,13 @@
 :key: This project goal is to automate enterprise reporting, by formatting InfluxDB data into google spreadsheet, to be used with datastudio. </br></br>
 The script : </br>
   &nbsp;&nbsp;&nbsp;&nbsp;1 - Get hostnames from temboard PostgreSQL database; </br>
-  &nbsp;&nbsp;&nbsp;&nbsp;2 - Format received HTML pages to only get hostnames; </br>
-  &nbsp;&nbsp;&nbsp;&nbsp;3 - Call InfluxDB with hostnames; </br>
+  &nbsp;&nbsp;&nbsp;&nbsp;2 - Format received data to only get hostnames; </br>
+  &nbsp;&nbsp;&nbsp;&nbsp;3 - Call InfluxDB with hostnames (rec, prod and dev); </br>
   &nbsp;&nbsp;&nbsp;&nbsp;4 - Format InfluxDB CSV result to only get "mean last month CPU usage" and "mean last month RAM usage"; </br>
-  &nbsp;&nbsp;&nbsp;&nbsp;5 - Call Oracle database to get Ram, CPU and Disk usage; </br>
-  &nbsp;&nbsp;&nbsp;&nbsp;6 - Format result returned by oracle; </br>
-  &nbsp;&nbsp;&nbsp;&nbsp;7 - Send formatted CSVs to googlesheet; </br>
+  &nbsp;&nbsp;&nbsp;&nbsp;5 - Call InfluxDB to get availability data; </br>
+  &nbsp;&nbsp;&nbsp;&nbsp;6 - Call Oracle database to get Ram, CPU and Disk usage; </br>
+  &nbsp;&nbsp;&nbsp;&nbsp;7 - Format result returned by oracle; </br>
+  &nbsp;&nbsp;&nbsp;&nbsp;8 - Send formatted CSVs to googlesheet; </br>
 
 ## How to Start
 ```
@@ -51,10 +52,10 @@ docker run --name=influxdb -d -p 8086:8086 influxdb
 #Create DB via http
 curl -i -XPOST http://localhost:8086/query --data-urlencode "q=CREATE DATABASE mydb"
 
-#Write data into db
+#Write data into DB
 curl -i -XPOST 'http://localhost:8086/write?db=mydb' --data-binary 'cpu_load_short,host=server01,region=us-west value=0.64 1434055562000000000'
 
-#Export data to CSV
+#Export data from DB to CSV
 curl -G 'http://localhost:8086/query?pretty=true' --data-urlencode "db=mydb" --data-urlencode "q=SELECT \"value\" FROM \"cpu_load_short\" WHERE \"region\"='us-west'" -H "Accept: application/csv" > raw-csv-data.csv
 ```
 

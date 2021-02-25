@@ -31,6 +31,7 @@ function influxExport () {
         #Formatting for sheet and putting into formatted folder
         sed 's/^/'"$current_date"','$1','"$hostname"',CPU_Used (%),/' 'csv/raw/raw-influx('"$hostname"')-data.csv' >> 'csv/formatted/Capa-Postgre'
       else
+        echo
         echo "No CPU infos of '"$hostname"' has been returned from InfluxDB"
       fi
 
@@ -61,7 +62,7 @@ function influxExport () {
       #Convert hostname to instance name (u3recuXXX to pgsrXXX)
       if [[ "$1" == "Recette" ]]
       then
-        #Define hostname separation with "." get the first part, and remove the frist 8 char
+        #Define hostname separation with "." get the first part, and remove the first 8 char
         pgname="pgsr"$(cat 'csv/rec-temboard-hostnames.csv' | grep "$hostname" | cut -d . -f1 | cut -c8-)".recgroupement.systeme-u.fr"
 
       elif [[ "$1" == "Production" ]]
@@ -87,7 +88,7 @@ function influxExport () {
       
       if [ -s "csv/raw/raw-dispo'$1'-influx('"$hostname"')-data.csv" ]
       then
-        #Code to execute with all availability bools returned from
+        #Code to execute with all availability bools returned from influx
         echo "Availability data correctly received from influx"
         echo
       else
@@ -96,7 +97,7 @@ function influxExport () {
       fi
             
     done
-    echo "InfluxDB data correctly formatted to CSV normalisation."
+    echo "InfluxDB data of "$1" correctly formatted to CSV normalisation."
   }
 
   #Block to set variables before code and avoid code repetition
@@ -108,6 +109,7 @@ function influxExport () {
     influxURL="http://metrologie-influxdb-rec.recgroupement.systeme-u.fr:8086/query?pretty=true"
     echo
     echo "Influx rec export..."
+    echo
     launchExport "Recette"
 
   elif [[ "$1" == "prod" ]]
@@ -118,6 +120,7 @@ function influxExport () {
     influxURL="http://metrologie-influxdb-prod.groupement.systeme-u.fr:8086/query?pretty=true"
     echo
     echo "Influx prod export..."
+    echo
     launchExport "Production"
 
   elif [[ "$1" == "dev" ]]
@@ -128,6 +131,7 @@ function influxExport () {
     influxURL="http://metrologie-influxdb-prod.groupement.systeme-u.fr:8086/query?pretty=true"
     echo
     echo "Influx dev export..."
+    echo
     launchExport "Developpement"
 
   else

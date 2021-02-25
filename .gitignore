@@ -1,9 +1,9 @@
 *.pem
 *.json
-csv/raw/*
-csv/formatted/*
-csv/*.csv
 *.creds
 *.env
 *.pickle
 *.cookie
+csv/raw/*
+csv/formatted/*
+csv/*.csv

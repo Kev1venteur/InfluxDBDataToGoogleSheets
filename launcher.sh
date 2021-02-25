@@ -43,6 +43,12 @@ echo
 ./oracle-data_export/oracle-data_exporter.sh
 echo
 
+#Create Header file before sending data if not exixting
+if [ ! -s "csv/header" ] #File exist and is not empty
+then
+    echo "Date,Zone,Cible,Etiquette,Valeur" > csv/header.csv
+fi
+
 #Call python script to write csv data to google spreadsheet
 echo
 echo "Sending all data to Google Sheets..."
