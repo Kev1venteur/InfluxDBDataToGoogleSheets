@@ -83,7 +83,7 @@ function influxExport () {
             --data-urlencode "u=$influxuser"\
             --data-urlencode "p=$influxpass"\
             --data-urlencode "db=metrologie"\
-            --data-urlencode "q=SELECT \"postgres\" FROM \"pgsql-stat\" WHERE  \"host\"='"$pgname"' AND \"time\">'"$last_month_date"' AND \"time\"<'"$current_date"' tz('Europe/Paris')"\
+            --data-urlencode "q=SELECT \"postgres\" FROM \"pgsql-conn-test\" WHERE  \"host\"='"$pgname"' AND \"time\">'"$last_month_date"' AND \"time\"<'"$current_date"' tz('Europe/Paris')"\
             -H "Accept: application/csv" > 'csv/raw/raw-dispo'$1'-influx('"$hostname"')-data.csv'
       
       if [ -s "csv/raw/raw-dispo'$1'-influx('"$hostname"')-data.csv" ]
