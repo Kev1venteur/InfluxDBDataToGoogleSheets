@@ -69,7 +69,7 @@ function oracleExport() {
 
     done
     echo
-    echo "Oracle data of ${1} correctly formatted to CSV normalisation."
+    echo "Oracle data of ${1} formatted to CSV normalisation."
   }
 
   #Block to set variables before code and avoid code repetition

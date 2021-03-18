@@ -122,7 +122,7 @@ function influxExport () {
          
     done
     echo
-    echo "InfluxDB data of "$1" correctly formatted to CSV normalisation."
+    echo "InfluxDB data of "$1" formatted to CSV normalisation."
   }
 
   #Block to set variables before code and avoid code repetition
