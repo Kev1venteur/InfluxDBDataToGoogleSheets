@@ -16,10 +16,10 @@ oracle-data_export/instantclient_19_6/sqlplus.exe -S -L "$ORACLE_USERNAME/$ORACL
 #Remove FQDN and only keep first part
 OracleHosts=$(echo "${RAWOracleHosts}" | cut -d . -f1)
 
-#Get antu and put in dev hostname file
+#Get antu hostnames and put in dev hostname file
 echo "${OracleHosts}" | grep "antu" > csv/dev-oracle-hostnames.csv
 
-#Get recu and put in rec hostname file
+#Get recu hostnames and put in rec hostname file
 echo "Export Oracle hostnames from rec"
 echo "${OracleHosts}" | grep "recu" > csv/rec-oracle-hostnames.csv
 

@@ -60,15 +60,15 @@ function influxExport () {
       if [[ "$1" == "Recette" ]]
       then
         #Define hostname separation with "." get the first part, and remove the first 8 char
-        pgname="pgsr"$(cat 'csv/rec-temboard-hostnames.csv' | grep "$hostname" | cut -d . -f1 | cut -c8-)".recgroupement.systeme-u.fr"
+        pgname=$(cat 'csv/rec-temboard-hostnames.csv' | grep "$hostname" | cut -d . -f1 | cut -c8-)".recgroupement.systeme-u.fr"
 
       elif [[ "$1" == "Production" ]]
       then
-        pgname="pgsr"$(cat 'csv/prod-temboard-hostnames.csv' | grep "$hostname" | cut -d . -f1 | cut -c8-)".groupement.systeme-u.fr"
+        pgname=$(cat 'csv/prod-temboard-hostnames.csv' | grep "$hostname" | cut -d . -f1 | cut -c8-)".groupement.systeme-u.fr"
 
       elif [[ "$1" == "Developpement" ]]
       then
-        pgname="pgsr"$(cat 'csv/dev-temboard-hostnames.csv' | grep "$hostname" | cut -d . -f1 | cut -c8-)".groupement.systeme-u.fr"
+        pgname=$(cat 'csv/dev-temboard-hostnames.csv' | grep "$hostname" | cut -d . -f1 | cut -c8-)".groupement.systeme-u.fr"
 
       else
         echo "Error, no environement type (rec, dev, prod) specified, exiting..." 
@@ -80,7 +80,7 @@ function influxExport () {
             --data-urlencode "u=$influxuser"\
             --data-urlencode "p=$influxpass"\
             --data-urlencode "db=metrologie"\
-            --data-urlencode "q=SELECT \"postgres\" FROM \"pgsql-conn-test\" WHERE  \"host\"='"$pgname"' AND \"time\">'"$last_month_date"' AND \"time\"<'"$current_date"' tz('Europe/Paris')"\
+            --data-urlencode "q=SELECT \"postgres\" FROM \"pgsql-conn-test\" WHERE  \"host\"=~/"$pgname"/ AND \"time\">'"$last_month_date"' AND \"time\"<'"$current_date"' tz('Europe/Paris')"\
             -H "Accept: application/csv")
       
       if [ -z "$RAWInfluxDispo" ]
