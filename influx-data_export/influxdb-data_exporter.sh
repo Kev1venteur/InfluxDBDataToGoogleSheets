@@ -1,8 +1,5 @@
 #!/bin/bash
 function influxExport () {
-  #removing all old raw files
-  rm csv/raw/*
-
   #Setting dates to set request timestamp
   current_date=$(date +'%Y-%m-%d')
   last_month_date=$(date -d "$date -1 months" +"%Y-%m-%d")
@@ -12,51 +9,51 @@ function influxExport () {
     cat $csvHostnamesPath | while read hostname
     do
       #Calling InfluxDB API for CPU (can be executed in one request CPU + RAM, but in two the post-process is faster)
-      curl -sS -G $influxURL\
+      RAWInfluxCPU=$(curl -sS -G $influxURL\
             --data-urlencode "u=$influxuser"\
             --data-urlencode "p=$influxpass"\
             --data-urlencode "db=metrologie"\
             --data-urlencode "q=SELECT MEAN(\"cpu_idle\") FROM \"syst-metro-linux-cpu\" WHERE \"host\"='"$hostname"' AND \"time\">'"$last_month_date"' AND \"time\"<'"$current_date"'"\
-            -H "Accept: application/csv" > 'csv/raw/raw-influx('"$hostname"')-data.csv'
+            -H "Accept: application/csv")
 
-      if [ -s "csv/raw/raw-influx("$hostname")-data.csv" ] #File exist and is not empty
+      #Check if variable is empty
+      if [ -z "$RAWInfluxCPU" ]
       then
+        echo
+        echo "No CPU infos of '"$hostname"' has been returned from InfluxDB"
+      else
         #CPU formatting and calculation
-        float=$(sed -e '1d' 'csv/raw/raw-influx('$hostname')-data.csv' | cut -d , -f4)
+        float=$(echo "${RAWInfluxCPU}" | sed -e '1d' | cut -d , -f4)
         #Operation to get used CPU and not free CPU
         #Convert float to int
         int=${float%.*}
-        result=$((100 - $int))
-        echo $result > 'csv/raw/raw-influx('$hostname')-data.csv'
-        #Formatting for sheet and putting into formatted folder
-        sed 's/^/'"$current_date"','$1','"$hostname"',CPU_Used (%),/' 'csv/raw/raw-influx('"$hostname"')-data.csv' >> 'csv/formatted/Capa-Postgre'
-      else
-        echo
-        echo "No CPU infos of '"$hostname"' has been returned from InfluxDB"
+        influxCPU=$((100 - $int))
+        #Formatting for sheet and putting into formatted file
+        echo "${influxCPU}" | sed 's/^/'"$current_date"','$1','"$hostname"',CPU_Used (%),/' >> 'csv/formatted/Capa-Postgre'
       fi
 
       #Calling InfluxDB API for Memory
-      curl -sS -G $influxURL\
+      RAWInfluxRAM=$(curl -sS -G $influxURL\
             --data-urlencode "u=$influxuser"\
             --data-urlencode "p=$influxpass"\
             --data-urlencode "db=metrologie"\
             --data-urlencode "q=SELECT MEAN(\"MemAvailable\"),MEAN(\"MemTotal\") FROM \"syst-metro-linux-mem\" WHERE \"host\"='"$hostname"' AND \"time\">'"$last_month_date"' AND \"time\"<'"$current_date"'"\
-            -H "Accept: application/csv" > 'csv/raw/raw-influx('"$hostname"')-data.csv'
+            -H "Accept: application/csv")
 
-      if [ -s "csv/raw/raw-influx("$hostname")-data.csv" ]
+      #Check if variable is empty
+      if [ -z "$RAWInfluxRAM" ]
       then
+        echo "No RAM infos of '"$hostname"' has been returned from InfluxDB"
+      else
         #Ram formating and calculation
-        mem_free=$(sed -e '1d' 'csv/raw/raw-influx('"$hostname"')-data.csv' | cut -d , -f4)
-        mem_total=$(sed -e '1d' 'csv/raw/raw-influx('"$hostname"')-data.csv' | cut -d , -f5)
+        mem_free=$(echo "${RAWInfluxRAM}" | sed -e '1d' | cut -d , -f4)
+        mem_total=$(echo "${RAWInfluxRAM}" | sed -e '1d' | cut -d , -f5)
         mem_free=${mem_free%.*}
         mem_total=${mem_total%.*}
         mem_used=$(($mem_total - $mem_free))
-        result=$(($mem_used * 100 / $mem_total))
-        echo $result > 'csv/raw/raw-influx('"$hostname"')-data.csv'
-        sed 's/^/'"$current_date"','$1','"$hostname"',RAM_Used (%),/' 'csv/raw/raw-influx('"$hostname"')-data.csv' >> 'csv/formatted/Capa-Postgre'
+        influxCPU=$(($mem_used * 100 / $mem_total))
+        echo "${influxCPU}" | sed 's/^/'"$current_date"','$1','"$hostname"',RAM_Used (%),/' >> 'csv/formatted/Capa-Postgre'
         echo ""$current_date","$1","$hostname",Plan_Action," >> 'csv/formatted/Capa-Postgre'
-      else
-        echo "No RAM infos of '"$hostname"' has been returned from InfluxDB"
       fi
 
       #Convert hostname to instance name (u3recuXXX to pgsrXXX)
@@ -79,20 +76,20 @@ function influxExport () {
       fi
 
       #Calling InfluxDB API for Availaibility
-      curl -sS -G $influxURL\
+      RAWInfluxDispo=$(curl -sS -G $influxURL\
             --data-urlencode "u=$influxuser"\
             --data-urlencode "p=$influxpass"\
             --data-urlencode "db=metrologie"\
             --data-urlencode "q=SELECT \"postgres\" FROM \"pgsql-conn-test\" WHERE  \"host\"='"$pgname"' AND \"time\">'"$last_month_date"' AND \"time\"<'"$current_date"' tz('Europe/Paris')"\
-            -H "Accept: application/csv" > 'csv/raw/raw-dispo'$1'-influx('"$hostname"')-data.csv'
+            -H "Accept: application/csv")
       
-      if [ -s "csv/raw/raw-dispo'$1'-influx('"$hostname"')-data.csv" ]
+      if [ -z "$RAWInfluxDispo" ]
       then
-        #Code to execute with all availability bools returned from influx
-        echo "Availability data correctly received from influx"
+        echo "No availability infos of '"$pgname"' has been returned from InfluxDB"
         echo
       else
-        echo "No availability infos of '"$pgname"' has been returned from InfluxDB"
+        #Code to execute with all availability bools returned from influx
+        echo "Availability data correctly received from influx"
         echo
       fi
             

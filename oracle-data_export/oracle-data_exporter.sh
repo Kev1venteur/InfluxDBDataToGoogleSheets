@@ -3,7 +3,7 @@ function oracleExport() {
   function launchExport() {
     cat $csvHostnamesPath | while read _hostname
     do
-      # Read queries into variables
+      # Read sql queries and strore them into variables with env-variable substitution
       export envhostname="$(echo $_hostname)"
       export dollar='$'
       sqlram=$(envsubst < oracle-data_export/oracle-query-ram.sql)

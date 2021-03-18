@@ -1,7 +1,7 @@
 #!/bin/bash
 #---------------------------------CAUTION-------------------------------------------#
 #If the script does not works for any dark reasons, try deleting your
-#token.picle file in credentials folder & restart your internet
+#token.pickle file in credentials folder & restart your internet
 #connection.
 #-----------------------------------------------------------------------------------#
 #----------------------------------PROXY--------------------------------------------#
@@ -19,17 +19,16 @@ export https_proxy="http://127.0.0.1:9000"
 #-----------------------------------------------------------------------------------#
 #Cleaning before starting
 rm csv/formatted/*
-rm csv/raw/*
 
 #Call bash script to export hostnames of postgresql servers from Temboard database
 echo "Getting hostnames from Temboard..."
 echo
-./temboard_db-hostnames_exporter.sh
+./hostnames_export/temboard_db-hostnames_exporter.sh
 echo
 
 #Call bash script to export InfluxDB data to CSV via HTTP API
 echo
-source influxdb-data_exporter.sh
+source influx-data_export/influxdb-data_exporter.sh
 echo "Getting data from InfluxDB..."
 echo
 influxExport "rec"
@@ -40,7 +39,7 @@ echo
 #Call bash script to export hostnames of oracle servers from CloudControl database
 echo "Getting hostnames from Oracle..."
 echo
-./oracle-data_export/oracle_db-hostname_exporter.sh
+./hostnames_export/oracle_db-hostname_exporter.sh
 echo
 
 #Call bash script to export Oracle data to CSV via SQL request
