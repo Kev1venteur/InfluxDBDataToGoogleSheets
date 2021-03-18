@@ -1,13 +1,14 @@
 #!/bin/bash
-# RECETTE EXPORT
+
+# RECETTE - DEV EXPORT
+
 # Load database connection info
 source credentials/rec-oracle.env
-
-# Export hostnames from cloud control
-sqlhost="$(cat oracle-data_export/oracle-query-hostnames.sql)"
+# Load Query into variable
+sqlQuery="$(cat hostnames_export/oracle-query-hostnames.sql)"
 
 # Store query result in a variable
-RAWOracleHosts=$(echo -e "SET PAGESIZE 0\n SET FEEDBACK OFF\n $sqlhost" | \
+RAWOracleHosts=$(echo -e "SET PAGESIZE 0\n SET FEEDBACK OFF\n $sqlQuery" | \
 oracle-data_export/instantclient_19_6/sqlplus.exe -S -L "$ORACLE_USERNAME/$ORACLE_PASSWORD@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP) \
 (HOST=$ORACLE_HOST)(PORT=$ORACLE_PORT))(CONNECT_DATA=(SERVICE_NAME=$ORACLE_DATABASE)))")
 
@@ -20,17 +21,15 @@ echo "${OracleHosts}" | grep "antu" > csv/dev-oracle-hostnames.csv
 
 #Get recu and put in rec hostname file
 echo "Export Oracle hostnames from rec"
-echo "${OracleHosts}" | grep "recu" > csv/dev-oracle-hostnames.csv
+echo "${OracleHosts}" | grep "recu" > csv/rec-oracle-hostnames.csv
 
 # PRODUCTION EXPORT
+
 # Load database connection info
 source credentials/prod-oracle.env
 
-# Export hostnames from cloud control
-sqlhost="$(cat oracle-data_export/oracle-query-hostnames.sql)"
-
 # Store query result in a variable
-RAWProdOracleHosts=$(echo -e "SET PAGESIZE 0\n SET FEEDBACK OFF\n $sqlhost" | \
+RAWProdOracleHosts=$(echo -e "SET PAGESIZE 0\n SET FEEDBACK OFF\n $sqlQuery" | \
 oracle-data_export/instantclient_19_6/sqlplus.exe -S -L "$ORACLE_USERNAME/$ORACLE_PASSWORD@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP) \
 (HOST=$ORACLE_HOST)(PORT=$ORACLE_PORT))(CONNECT_DATA=(SERVICE_NAME=$ORACLE_DATABASE)))")
 

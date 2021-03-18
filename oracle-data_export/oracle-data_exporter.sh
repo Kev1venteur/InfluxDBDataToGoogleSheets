@@ -58,6 +58,7 @@ function oracleExport() {
         echo "$(date +"%Y-%m-%d") ,${1},$(echo $_hostname),Plan_Action" >> csv/formatted/Capa-Oracle
       fi
     done
+    echo
     echo "Oracle data of ${1} correctly formatted to CSV normalisation."
   }
 
@@ -90,6 +91,7 @@ function oracleExport() {
     launchExport "Developpement"
 
   else
+    echo
     echo "Error, no environement type (rec, dev, prod) specified, exiting..." 
     exit
   fi
