@@ -69,7 +69,7 @@ function influxExport () {
       #Check if variable is empty
       if [ -z "$RAWInfluxDisk" ]
       then
-        echo "Null" | sed 's/^/'"$current_date"','$1','"$hostname"',Disk_Used (%),/' >> 'csv/formatted/Capa-Postgre'
+        echo "Null" | sed 's/^/'"$current_date"','$1','"$hostname"',Disk_Used_u01 (%),/' >> 'csv/formatted/Capa-Postgre'
       else
         #Disk formating and send in CSV
         influxDisk=$(echo "${RAWInfluxDisk}" | sed -e '1d' | cut -d , -f4)
