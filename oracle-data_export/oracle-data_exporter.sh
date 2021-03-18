@@ -1,6 +1,10 @@
 #!/bin/bash
 function oracleExport() {
   function launchExport() {
+    #Count lines in CSV files to make a counter
+    totalLines=$(wc -l $csvHostnamesPath | cut -f1 -d' ')
+    doneLines=0
+
     cat $csvHostnamesPath | while read _hostname
     do
       # Read sql queries and strore them into variables with env-variable substitution
@@ -17,31 +21,29 @@ function oracleExport() {
       fi
 
       # Connect to the database, run the query, then disconnect
-      #RAM Request
-      returnedRAMInfo=$(echo -e "SET PAGESIZE 0\n SET FEEDBACK OFF\n ${sqlram}" | \
-      oracle-data_export/instantclient_19_6/sqlplus.exe -S -L \
-      "${ORACLE_USERNAME}/${ORACLE_PASSWORD}@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=${ORACLE_HOST})(PORT=${ORACLE_PORT}))(CONNECT_DATA=(SERVICE_NAME=${ORACLE_DATABASE})))")
-      
-      #If no info of RAM size returned, print message, else format result and put in formatted
-      if [ -z "$returnedRAMInfo" ]
-      then  
-        echo
-        echo "No RAM infos of ${_hostname} has been returned from Oracle Cloud Control"
-      else
-        echo "${returnedRAMInfo}" | sed -e 's/\s\+/,/g' | sed 's/^/,Ram_Used (%)/' | sed 's/^/,'${1}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> csv/formatted/Capa-Oracle
-      fi
-
       #CPU Request
       returnedCPUInfo=$(echo -e "SET PAGESIZE 0\n SET FEEDBACK OFF\n ${sqlcpu}" | \
       oracle-data_export/instantclient_19_6/sqlplus.exe -S -L \
       "${ORACLE_USERNAME}/${ORACLE_PASSWORD}@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=${ORACLE_HOST})(PORT=${ORACLE_PORT}))(CONNECT_DATA=(SERVICE_NAME=${ORACLE_DATABASE})))")
 
-      #If no info of CPU size returned, print message, else format result and put in formatted
+      #If no info of CPU size returned, print message and null value, else format result and put in formatted
       if [ -z "$returnedCPUInfo" ]
       then  
-        echo "No CPU infos of ${_hostname} has been returned from Oracle Cloud Control"
+        echo ",Null" | sed -e 's/\s\+/,/g' | sed 's/^/,CPU_Used (%)/' | sed 's/^/,'${1}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> csv/formatted/Capa-Oracle
       else
         echo "${returnedCPUInfo}" | sed -e 's/\s\+/,/g' | sed 's/^/,CPU_Used (%)/' | sed 's/^/,'${1}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> csv/formatted/Capa-Oracle
+      fi
+
+      #RAM Request
+      returnedRAMInfo=$(echo -e "SET PAGESIZE 0\n SET FEEDBACK OFF\n ${sqlram}" | \
+      oracle-data_export/instantclient_19_6/sqlplus.exe -S -L \
+      "${ORACLE_USERNAME}/${ORACLE_PASSWORD}@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=${ORACLE_HOST})(PORT=${ORACLE_PORT}))(CONNECT_DATA=(SERVICE_NAME=${ORACLE_DATABASE})))")
+      
+      if [ -z "$returnedRAMInfo" ]
+      then  
+        echo ",Null" | sed -e 's/\s\+/,/g' | sed 's/^/,Ram_Used (%)/' | sed 's/^/,'${1}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> csv/formatted/Capa-Oracle
+      else
+        echo "${returnedRAMInfo}" | sed -e 's/\s\+/,/g' | sed 's/^/,Ram_Used (%)/' | sed 's/^/,'${1}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> csv/formatted/Capa-Oracle
       fi
 
       #Disk Request
@@ -49,14 +51,22 @@ function oracleExport() {
       oracle-data_export/instantclient_19_6/sqlplus.exe -S -L \
       "${ORACLE_USERNAME}/${ORACLE_PASSWORD}@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=${ORACLE_HOST})(PORT=${ORACLE_PORT}))(CONNECT_DATA=(SERVICE_NAME=${ORACLE_DATABASE})))")
       
-      #If no info of Disk size returned, print message, else format result and put in formatted
       if [ -z "$returnedDiskInfo" ]
-      then  
-        echo "No Disk infos of ${_hostname} has been returned from Oracle Cloud Control"
+      then 
+        echo ",Null" | sed -e 's/\s\+/,/g' | sed 's/^/,Disk_Used (%)/' | sed 's/^/,'${1}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> csv/formatted/Capa-Oracle
       else
         echo "${returnedDiskInfo}" | sed -e 's/\s\+/,/g' | sed 's/^/,Disk_Used (%)/' | sed 's/^/,'${1}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> csv/formatted/Capa-Oracle
-        echo "$(date +"%Y-%m-%d") ,${1},$(echo $_hostname),Plan_Action" >> csv/formatted/Capa-Oracle
       fi
+
+      # Echo "plan d'action"
+      echo "$(date +"%Y-%m-%d") ,${1},$(echo $_hostname),Plan_Action" >> csv/formatted/Capa-Oracle
+
+      #Increment counter
+      ((doneLines=doneLines+1))
+      
+      #Show number of host done
+      echo "[${doneLines}/${totalLines}]"  
+
     done
     echo
     echo "Oracle data of ${1} correctly formatted to CSV normalisation."

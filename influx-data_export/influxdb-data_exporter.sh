@@ -5,6 +5,10 @@ function influxExport () {
   last_month_date=$(date -d "$date -1 months" +"%Y-%m-%d")
 
   function launchExport () {
+    #Count lines in CSV files to make a counter
+    totalLines=$(wc -l $csvHostnamesPath | cut -f1 -d' ')
+    doneLines=0
+
     #Foreach rec hostname, getting data from influxdb directly into separated CSV format
     cat $csvHostnamesPath | while read hostname
     do
@@ -13,14 +17,13 @@ function influxExport () {
             --data-urlencode "u=$influxuser"\
             --data-urlencode "p=$influxpass"\
             --data-urlencode "db=metrologie"\
-            --data-urlencode "q=SELECT MEAN(\"cpu_idle\") FROM \"syst-metro-linux-cpu\" WHERE \"host\"='"$hostname"' AND \"time\">'"$last_month_date"' AND \"time\"<'"$current_date"'"\
+            --data-urlencode "q=SELECT MEAN(\"cpu_idle\") FROM \"syst-metro-linux-cpu\" WHERE \"host\"=~/"$hostname"/ AND \"time\">'"$last_month_date"' AND \"time\"<'"$current_date"'"\
             -H "Accept: application/csv")
 
-      #Check if variable is empty
+      #If no info of CPU size returned, print message and null value, else format result and put in formatted
       if [ -z "$RAWInfluxCPU" ]
       then
-        echo
-        echo "No CPU infos of '"$hostname"' has been returned from InfluxDB"
+        echo "Null" | sed 's/^/'"$current_date"','$1','"$hostname"',CPU_Used (%),/' >> 'csv/formatted/Capa-Postgre'
       else
         #CPU formatting and calculation
         float=$(echo "${RAWInfluxCPU}" | sed -e '1d' | cut -d , -f4)
@@ -37,13 +40,13 @@ function influxExport () {
             --data-urlencode "u=$influxuser"\
             --data-urlencode "p=$influxpass"\
             --data-urlencode "db=metrologie"\
-            --data-urlencode "q=SELECT MEAN(\"MemAvailable\"),MEAN(\"MemTotal\") FROM \"syst-metro-linux-mem\" WHERE \"host\"='"$hostname"' AND \"time\">'"$last_month_date"' AND \"time\"<'"$current_date"'"\
+            --data-urlencode "q=SELECT MEAN(\"MemAvailable\"),MEAN(\"MemTotal\") FROM \"syst-metro-linux-mem\" WHERE \"host\"=~/"$hostname"/ AND \"time\">'"$last_month_date"' AND \"time\"<'"$current_date"'"\
             -H "Accept: application/csv")
 
       #Check if variable is empty
       if [ -z "$RAWInfluxRAM" ]
       then
-        echo "No RAM infos of '"$hostname"' has been returned from InfluxDB"
+        echo "Null" | sed 's/^/'"$current_date"','$1','"$hostname"',RAM_Used (%),/' >> 'csv/formatted/Capa-Postgre'
       else
         #Ram formating and calculation
         mem_free=$(echo "${RAWInfluxRAM}" | sed -e '1d' | cut -d , -f4)
@@ -51,9 +54,26 @@ function influxExport () {
         mem_free=${mem_free%.*}
         mem_total=${mem_total%.*}
         mem_used=$(($mem_total - $mem_free))
-        influxCPU=$(($mem_used * 100 / $mem_total))
-        echo "${influxCPU}" | sed 's/^/'"$current_date"','$1','"$hostname"',RAM_Used (%),/' >> 'csv/formatted/Capa-Postgre'
-        echo ""$current_date","$1","$hostname",Plan_Action," >> 'csv/formatted/Capa-Postgre'
+        influxRAM=$(($mem_used * 100 / $mem_total))
+        echo "${influxRAM}" | sed 's/^/'"$current_date"','$1','"$hostname"',RAM_Used (%),/' >> 'csv/formatted/Capa-Postgre'
+      fi
+
+      #Calling InfluxDB API for Volume Group
+      RAWInfluxDisk=$(curl -sS -G $influxURL\
+            --data-urlencode "u=$influxuser"\
+            --data-urlencode "p=$influxpass"\
+            --data-urlencode "db=metrologie"\
+            --data-urlencode "q=SELECT ROUND(MEAN(\"_u01_%\")) FROM \"disk-gen-full-_u01\" WHERE \"host\"=~/"$hostname"/ AND \"time\">'"$last_month_date"' AND \"time\"<'"$current_date"'"\
+            -H "Accept: application/csv")
+
+      #Check if variable is empty
+      if [ -z "$RAWInfluxDisk" ]
+      then
+        echo "Null" | sed 's/^/'"$current_date"','$1','"$hostname"',Disk_Used (%),/' >> 'csv/formatted/Capa-Postgre'
+      else
+        #Disk formating and send in CSV
+        influxDisk=$(echo "${RAWInfluxDisk}" | sed -e '1d' | cut -d , -f4)
+        echo "${influxDisk}" | sed 's/^/'"$current_date"','$1','"$hostname"',Disk_Used_u01 (%),/' >> 'csv/formatted/Capa-Postgre'
       fi
 
       #Convert hostname to instance name (u3recuXXX to pgsrXXX)
@@ -83,17 +103,25 @@ function influxExport () {
             --data-urlencode "q=SELECT \"postgres\" FROM \"pgsql-conn-test\" WHERE  \"host\"=~/"$pgname"/ AND \"time\">'"$last_month_date"' AND \"time\"<'"$current_date"' tz('Europe/Paris')"\
             -H "Accept: application/csv")
       
-      if [ -z "$RAWInfluxDispo" ]
-      then
-        echo "No availability infos of '"$pgname"' has been returned from InfluxDB"
-        echo
-      else
-        #Code to execute with all availability bools returned from influx
-        echo "Availability data correctly received from influx"
-        echo
-      fi
-            
+      # if [ -z "$RAWInfluxDispo" ]
+      # then
+      #   echo 
+      # else
+      #   #Code to execute with all availability bools returned from influx
+      #   echo
+      # fi
+
+      # Echo "plan d'action"
+      echo ""$current_date","$1","$hostname",Plan_Action," >> 'csv/formatted/Capa-Postgre'
+
+      #Increment counter
+      ((doneLines=doneLines+1))
+      
+      #Show number of host done
+      echo "[${doneLines}/${totalLines}]"  
+         
     done
+    echo
     echo "InfluxDB data of "$1" correctly formatted to CSV normalisation."
   }
 
