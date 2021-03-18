@@ -1,14 +1,16 @@
 # InfluxDBDataToGoogleSheets
 :key: This project goal is to automate enterprise reporting, by formatting InfluxDB data into google spreadsheet, to be used with datastudio. </br></br>
 The script : </br>
+  &nbsp;&nbsp;&nbsp;&nbsp;0 - Show the progression of execution; </br>
   &nbsp;&nbsp;&nbsp;&nbsp;1 - Get hostnames from temboard PostgreSQL database; </br>
   &nbsp;&nbsp;&nbsp;&nbsp;2 - Format received data to only get hostnames; </br>
   &nbsp;&nbsp;&nbsp;&nbsp;3 - Call InfluxDB with hostnames (rec, prod and dev); </br>
   &nbsp;&nbsp;&nbsp;&nbsp;4 - Format InfluxDB CSV result to only get "mean last month CPU usage" and "mean last month RAM usage"; </br>
   &nbsp;&nbsp;&nbsp;&nbsp;5 - Call InfluxDB to get availability data; </br>
-  &nbsp;&nbsp;&nbsp;&nbsp;6 - Call Oracle database to get Ram, CPU and Disk usage; </br>
+  &nbsp;&nbsp;&nbsp;&nbsp;6 - Call Oracle database to get Ram, CPU and Disk usage (rec, prod and dev); </br>
   &nbsp;&nbsp;&nbsp;&nbsp;7 - Format result returned by oracle; </br>
   &nbsp;&nbsp;&nbsp;&nbsp;8 - Send formatted CSVs to googlesheet; </br>
+  &nbsp;&nbsp;&nbsp;&nbsp;8.5 - Create Sheet into Spreadsheet, to write into, if no eponym sheet of formatted file is existing; </br>
 
 ## How to Start
 ```
