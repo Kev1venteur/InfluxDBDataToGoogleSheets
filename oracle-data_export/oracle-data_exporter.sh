@@ -10,10 +10,11 @@ function oracleExport() {
       # Read sql queries and strore them into variables with env-variable substitution
       export envhostname="$(echo $_hostname)"
       export dollar='$'
+      sqlclusterName=$(envsubst < oracle-data_export/oracle-query-clusterName.sql)
       sqlram=$(envsubst < oracle-data_export/oracle-query-ram.sql)
       sqlcpu=$(envsubst < oracle-data_export/oracle-query-cpu.sql)
-      sqldisk=$(envsubst < oracle-data_export/oracle-query-disk.sql)
-      sqlclusterName=$(envsubst < oracle-data_export/oracle-query-clusterName.sql)
+      sqlDGData=$(envsubst < oracle-data_export/oracle-query-dgData.sql)
+      sqlDGReco=$(envsubst < oracle-data_export/oracle-query-dgReco.sql)
 
       # If sqlplus is not installed, then exit
       if ! command -v oracle-data_export/instantclient_19_6/sqlplus.exe > /dev/null; then
@@ -42,9 +43,9 @@ function oracleExport() {
       #If no info of CPU size returned, print message and null value, else format result and put in formatted
       if [ -z "$returnedCPUInfo" ]
       then  
-        echo ",Null" | sed -e 's/\s\+/,/g' | sed 's/^/,CPU_Used (%)/' | sed 's/^/,'${1}','${returnedClusterName}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> csv/formatted/Capa-Oracle
+        echo ",Null" | sed -e 's/\s\+/,/g' | sed 's/^/,CPU_Used (%)/' | sed 's/^/,'${1}','${returnedClusterName}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> ${formattedCSVPath}
       else
-        echo "${returnedCPUInfo}" | sed -e 's/\s\+/,/g' | sed 's/^/,CPU_Used (%)/' | sed 's/^/,'${1}','${returnedClusterName}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> csv/formatted/Capa-Oracle
+        echo "${returnedCPUInfo}" | sed -e 's/\s\+/,/g' | sed 's/^/,CPU_Used (%)/' | sed 's/^/,'${1}','${returnedClusterName}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> ${formattedCSVPath}
       fi
 
       #RAM Request
@@ -54,25 +55,37 @@ function oracleExport() {
       
       if [ -z "$returnedRAMInfo" ]
       then  
-        echo ",Null" | sed -e 's/\s\+/,/g' | sed 's/^/,Ram_Used (%)/' | sed 's/^/,'${1}','${returnedClusterName}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> csv/formatted/Capa-Oracle
+        echo ",Null" | sed -e 's/\s\+/,/g' | sed 's/^/,Ram_Used (%)/' | sed 's/^/,'${1}','${returnedClusterName}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> ${formattedCSVPath}
       else
-        echo "${returnedRAMInfo}" | sed -e 's/\s\+/,/g' | sed 's/^/,Ram_Used (%)/' | sed 's/^/,'${1}','${returnedClusterName}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> csv/formatted/Capa-Oracle
+        echo "${returnedRAMInfo}" | sed -e 's/\s\+/,/g' | sed 's/^/,Ram_Used (%)/' | sed 's/^/,'${1}','${returnedClusterName}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> ${formattedCSVPath}
       fi
 
-      #Disk Request
-      returnedDiskInfo=$(echo -e "SET PAGESIZE 0\n SET FEEDBACK OFF\n ${sqldisk}" | \
+      #Disk Group Data Request
+      returnedDGDataInfo=$(echo -e "SET PAGESIZE 0\n SET FEEDBACK OFF\n ${sqlDGData}" | \
+      oracle-data_export/instantclient_19_6/sqlplus.exe -S -L \
+      "${ORACLE_USERNAME}/${ORACLE_PASSWORD}@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=${ORACLE_HOST})(PORT=${ORACLE_PORT}))(CONNECT_DATA=(SERVICE_NAME=${ORACLE_DATABASE})))")
+
+      if [ -z "$returnedDGDataInfo" ]
+      then 
+        echo ",Null" | sed -e 's/\s\+/,/g' | sed 's/^/,DGData_Used (%)/' | sed 's/^/,'${1}','${returnedClusterName}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> ${formattedCSVPath}
+      else
+        echo "${returnedDGDataInfo}" | sed -e 's/\s\+/,/g' | sed 's/^/,DGData_Used (%)/' | sed 's/^/,'${1}','${returnedClusterName}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> ${formattedCSVPath}
+      fi
+
+      #Disk Group Reco Request
+      returnedDGRecoInfo=$(echo -e "SET PAGESIZE 0\n SET FEEDBACK OFF\n ${sqlDGReco}" | \
       oracle-data_export/instantclient_19_6/sqlplus.exe -S -L \
       "${ORACLE_USERNAME}/${ORACLE_PASSWORD}@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=${ORACLE_HOST})(PORT=${ORACLE_PORT}))(CONNECT_DATA=(SERVICE_NAME=${ORACLE_DATABASE})))")
       
-      if [ -z "$returnedDiskInfo" ]
+      if [ -z "$returnedDGRecoInfo" ]
       then 
-        echo ",Null" | sed -e 's/\s\+/,/g' | sed 's/^/,Disk_Used (%)/' | sed 's/^/,'${1}','${returnedClusterName}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> csv/formatted/Capa-Oracle
+        echo ",Null" | sed -e 's/\s\+/,/g' | sed 's/^/,DGReco_Used (%)/' | sed 's/^/,'${1}','${returnedClusterName}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> ${formattedCSVPath}
       else
-        echo "${returnedDiskInfo}" | sed -e 's/\s\+/,/g' | sed 's/^/,Disk_Used (%)/' | sed 's/^/,'${1}','${returnedClusterName}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> csv/formatted/Capa-Oracle
+        echo "${returnedDGRecoInfo}" | sed -e 's/\s\+/,/g' | sed 's/^/,DGReco_Used (%)/' | sed 's/^/,'${1}','${returnedClusterName}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> ${formattedCSVPath}
       fi
 
       # Echo "plan d'action"
-      echo "$(date +"%Y-%m-%d") ,${1},${returnedClusterName},$(echo $_hostname),Plan_Action" >> csv/formatted/Capa-Oracle
+      echo "$(date +"%Y-%m-%d") ,${1},${returnedClusterName},$(echo $_hostname),Plan_Action" >> ${formattedCSVPath}
 
       #Increment counter
       ((doneLines=doneLines+1))
@@ -90,6 +103,7 @@ function oracleExport() {
   then
     source credentials/rec-oracle.env
     csvHostnamesPath="csv/rec-oracle-hostnames.csv"
+    formattedCSVPath="csv/formatted/Capa-Oracle"
     echo
     echo "Oracle rec export..."
     echo
@@ -99,6 +113,7 @@ function oracleExport() {
   then
     source credentials/prod-oracle.env
     csvHostnamesPath="csv/prod-oracle-hostnames.csv"
+    formattedCSVPath="csv/formatted/Capa-Oracle"
     echo
     echo "Oracle prod export..."
     echo
@@ -108,6 +123,7 @@ function oracleExport() {
   then
     source credentials/rec-oracle.env
     csvHostnamesPath="csv/dev-oracle-hostnames.csv"
+    formattedCSVPath="csv/formatted/Capa-Oracle"
     echo
     echo "Oracle dev export..."
     echo

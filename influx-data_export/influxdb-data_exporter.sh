@@ -23,7 +23,7 @@ function influxExport () {
       #If no info of CPU size returned, print message and null value, else format result and put in formatted
       if [ -z "$RAWInfluxCPU" ]
       then
-        echo "Null" | sed 's/^/'"$current_date"','$1','"$hostname"',CPU_Used (%),/' >> 'csv/formatted/Capa-Postgre'
+        echo "Null" | sed 's/^/'"$current_date"','$1','"$hostname"',CPU_Used (%),/' >> ${formattedCSVPath}
       else
         #CPU formatting and calculation
         float=$(echo "${RAWInfluxCPU}" | sed -e '1d' | cut -d , -f4)
@@ -32,7 +32,7 @@ function influxExport () {
         int=${float%.*}
         influxCPU=$((100 - $int))
         #Formatting for sheet and putting into formatted file
-        echo "${influxCPU}" | sed 's/^/'"$current_date"','$1','"$hostname"',CPU_Used (%),/' >> 'csv/formatted/Capa-Postgre'
+        echo "${influxCPU}" | sed 's/^/'"$current_date"','$1','"$hostname"',CPU_Used (%),/' >> ${formattedCSVPath}
       fi
 
       #Calling InfluxDB API for Memory
@@ -46,7 +46,7 @@ function influxExport () {
       #Check if variable is empty
       if [ -z "$RAWInfluxRAM" ]
       then
-        echo "Null" | sed 's/^/'"$current_date"','$1','"$hostname"',RAM_Used (%),/' >> 'csv/formatted/Capa-Postgre'
+        echo "Null" | sed 's/^/'"$current_date"','$1','"$hostname"',RAM_Used (%),/' >> ${formattedCSVPath}
       else
         #Ram formating and calculation
         mem_free=$(echo "${RAWInfluxRAM}" | sed -e '1d' | cut -d , -f4)
@@ -55,7 +55,7 @@ function influxExport () {
         mem_total=${mem_total%.*}
         mem_used=$(($mem_total - $mem_free))
         influxRAM=$(($mem_used * 100 / $mem_total))
-        echo "${influxRAM}" | sed 's/^/'"$current_date"','$1','"$hostname"',RAM_Used (%),/' >> 'csv/formatted/Capa-Postgre'
+        echo "${influxRAM}" | sed 's/^/'"$current_date"','$1','"$hostname"',RAM_Used (%),/' >> ${formattedCSVPath}
       fi
 
       #Calling InfluxDB API for Volume Group
@@ -69,11 +69,11 @@ function influxExport () {
       #Check if variable is empty
       if [ -z "$RAWInfluxDisk" ]
       then
-        echo "Null" | sed 's/^/'"$current_date"','$1','"$hostname"',Disk_Used_u01 (%),/' >> 'csv/formatted/Capa-Postgre'
+        echo "Null" | sed 's/^/'"$current_date"','$1','"$hostname"',Disk_Used_u01 (%),/' >> ${formattedCSVPath}
       else
         #Disk formating and send in CSV
         influxDisk=$(echo "${RAWInfluxDisk}" | sed -e '1d' | cut -d , -f4)
-        echo "${influxDisk}" | sed 's/^/'"$current_date"','$1','"$hostname"',Disk_Used_u01 (%),/' >> 'csv/formatted/Capa-Postgre'
+        echo "${influxDisk}" | sed 's/^/'"$current_date"','$1','"$hostname"',Disk_Used_u01 (%),/' >> ${formattedCSVPath}
       fi
 
       #Convert hostname to instance name (u3recuXXX to pgsrXXX)
@@ -112,7 +112,7 @@ function influxExport () {
       # fi
 
       # Echo "plan d'action"
-      echo ""$current_date","$1","$hostname",Plan_Action," >> 'csv/formatted/Capa-Postgre'
+      echo ""$current_date","$1","$hostname",Plan_Action," >> ${formattedCSVPath}
 
       #Increment counter
       ((doneLines=doneLines+1))
@@ -131,6 +131,7 @@ function influxExport () {
     influxuser=$(sed -n -e 1p credentials/influx-rec.creds)
     influxpass=$(sed -n -e 2p credentials/influx-rec.creds)
     csvHostnamesPath="csv/rec-temboard-hostnames.csv"
+    formattedCSVPath='csv/formatted/Capa-Postgre'
     influxURL="http://metrologie-influxdb-rec.recgroupement.systeme-u.fr:8086/query?pretty=true"
     echo
     echo "Influx rec export..."
@@ -142,6 +143,7 @@ function influxExport () {
     influxuser=$(sed -n -e 1p credentials/influx-prod.creds)
     influxpass=$(sed -n -e 2p credentials/influx-prod.creds)
     csvHostnamesPath="csv/prod-temboard-hostnames.csv"
+    formattedCSVPath='csv/formatted/Capa-Postgre'
     influxURL="http://metrologie-influxdb-prod.groupement.systeme-u.fr:8086/query?pretty=true"
     echo
     echo "Influx prod export..."
@@ -153,6 +155,7 @@ function influxExport () {
     influxuser=$(sed -n -e 1p credentials/influx-prod.creds)
     influxpass=$(sed -n -e 2p credentials/influx-prod.creds)
     csvHostnamesPath="csv/dev-temboard-hostnames.csv"
+    formattedCSVPath='csv/formatted/Capa-Postgre'
     influxURL="http://metrologie-influxdb-prod.groupement.systeme-u.fr:8086/query?pretty=true"
     echo
     echo "Influx dev export..."
