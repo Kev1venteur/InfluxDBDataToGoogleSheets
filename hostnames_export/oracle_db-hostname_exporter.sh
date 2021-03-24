@@ -17,10 +17,12 @@ oracle-data_export/instantclient_19_6/sqlplus.exe -S -L "$ORACLE_USERNAME/$ORACL
 OracleHosts=$(echo "${RAWOracleHosts}" | cut -d . -f1)
 
 #Get antu hostnames and put in dev hostname file
+echo "Export Oracle hostnames from dev..."
 echo "${OracleHosts}" | grep "antu" > csv/dev-oracle-hostnames.csv
 
 #Get recu hostnames and put in rec hostname file
-echo "Export Oracle hostnames from rec"
+echo
+echo "Export Oracle hostnames from rec..."
 echo "${OracleHosts}" | grep "recu" > csv/rec-oracle-hostnames.csv
 
 # PRODUCTION EXPORT
@@ -35,4 +37,6 @@ oracle-data_export/instantclient_19_6/sqlplus.exe -S -L "$ORACLE_USERNAME/$ORACL
 
 # Format exported hostnames
 #Remove FQDN and only keep first part
+echo
+echo "Export Oracle hostnames from prod..."
 echo "${RAWProdOracleHosts}" | cut -d . -f1 > csv/prod-oracle-hostnames.csv

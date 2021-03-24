@@ -52,11 +52,9 @@ oracleExport "rec"
 oracleExport "dev"
 echo
 
-#Create Header file before sending data if not exixting
-if [ ! -s "csv/header" ] #File exist and is not empty
-then
-    echo "Date,Zone,Cible,Etiquette,Valeur" > csv/header.csv
-fi
+#Create Header files before sending data
+echo "Date,Zone,Cible,Etiquette,Valeur" > csv/header/Capa-Postgre.csv
+echo "Date,Zone,Cluster,Cible,Etiquette,Valeur" > csv/header/Capa-Oracle.csv
 
 #Call python script to write csv data to google spreadsheet
 echo

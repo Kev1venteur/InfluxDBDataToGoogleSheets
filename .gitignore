@@ -5,4 +5,5 @@
 *.pickle
 *.cookie
 csv/formatted/*
+csv/header/*
 csv/*.csv

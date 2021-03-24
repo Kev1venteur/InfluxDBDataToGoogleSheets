@@ -111,7 +111,7 @@ def main():
             #Sheet id become id of the newly created sheet
             sheet_id = find_sheet_id_by_name(filename)
             #Add header at first line of the sheet
-            push_csv_to_gsheet(csv_path="csv/header.csv",sheet_id=sheet_id,range=range,isHeader=1)
+            push_csv_to_gsheet(csv_path="csv/header/" + filename + ".csv",sheet_id=sheet_id,range=range,isHeader=1)
             
         #Setting CSV path with base path + hostname
         csv_path = csv_base_path + filename

@@ -13,11 +13,24 @@ function oracleExport() {
       sqlram=$(envsubst < oracle-data_export/oracle-query-ram.sql)
       sqlcpu=$(envsubst < oracle-data_export/oracle-query-cpu.sql)
       sqldisk=$(envsubst < oracle-data_export/oracle-query-disk.sql)
+      sqlclusterName=$(envsubst < oracle-data_export/oracle-query-clusterName.sql)
 
       # If sqlplus is not installed, then exit
       if ! command -v oracle-data_export/instantclient_19_6/sqlplus.exe > /dev/null; then
         echo "L'executable SQLPlus 'oracle-data_export/instantclient_19_6/sqlplus.exe' est nécessaire pour exécuter ce script..."
         exit 1
+      fi
+
+      # Connect to the database, run the query, then disconnect
+      #Cluster Name Request
+      returnedClusterName=$(echo -e "SET PAGESIZE 0\n SET FEEDBACK OFF\n ${sqlclusterName}" | \
+      oracle-data_export/instantclient_19_6/sqlplus.exe -S -L \
+      "${ORACLE_USERNAME}/${ORACLE_PASSWORD}@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=${ORACLE_HOST})(PORT=${ORACLE_PORT}))(CONNECT_DATA=(SERVICE_NAME=${ORACLE_DATABASE})))")
+
+      #If no info of CPU size returned, print message and null value, else format result and put in formatted
+      if [ -z "$returnedClusterName" ]
+      then  
+        returnedClusterName="Null"
       fi
 
       # Connect to the database, run the query, then disconnect
@@ -29,9 +42,9 @@ function oracleExport() {
       #If no info of CPU size returned, print message and null value, else format result and put in formatted
       if [ -z "$returnedCPUInfo" ]
       then  
-        echo ",Null" | sed -e 's/\s\+/,/g' | sed 's/^/,CPU_Used (%)/' | sed 's/^/,'${1}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> csv/formatted/Capa-Oracle
+        echo ",Null" | sed -e 's/\s\+/,/g' | sed 's/^/,CPU_Used (%)/' | sed 's/^/,'${1}','${returnedClusterName}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> csv/formatted/Capa-Oracle
       else
-        echo "${returnedCPUInfo}" | sed -e 's/\s\+/,/g' | sed 's/^/,CPU_Used (%)/' | sed 's/^/,'${1}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> csv/formatted/Capa-Oracle
+        echo "${returnedCPUInfo}" | sed -e 's/\s\+/,/g' | sed 's/^/,CPU_Used (%)/' | sed 's/^/,'${1}','${returnedClusterName}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> csv/formatted/Capa-Oracle
       fi
 
       #RAM Request
@@ -41,9 +54,9 @@ function oracleExport() {
       
       if [ -z "$returnedRAMInfo" ]
       then  
-        echo ",Null" | sed -e 's/\s\+/,/g' | sed 's/^/,Ram_Used (%)/' | sed 's/^/,'${1}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> csv/formatted/Capa-Oracle
+        echo ",Null" | sed -e 's/\s\+/,/g' | sed 's/^/,Ram_Used (%)/' | sed 's/^/,'${1}','${returnedClusterName}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> csv/formatted/Capa-Oracle
       else
-        echo "${returnedRAMInfo}" | sed -e 's/\s\+/,/g' | sed 's/^/,Ram_Used (%)/' | sed 's/^/,'${1}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> csv/formatted/Capa-Oracle
+        echo "${returnedRAMInfo}" | sed -e 's/\s\+/,/g' | sed 's/^/,Ram_Used (%)/' | sed 's/^/,'${1}','${returnedClusterName}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> csv/formatted/Capa-Oracle
       fi
 
       #Disk Request
@@ -53,13 +66,13 @@ function oracleExport() {
       
       if [ -z "$returnedDiskInfo" ]
       then 
-        echo ",Null" | sed -e 's/\s\+/,/g' | sed 's/^/,Disk_Used (%)/' | sed 's/^/,'${1}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> csv/formatted/Capa-Oracle
+        echo ",Null" | sed -e 's/\s\+/,/g' | sed 's/^/,Disk_Used (%)/' | sed 's/^/,'${1}','${returnedClusterName}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> csv/formatted/Capa-Oracle
       else
-        echo "${returnedDiskInfo}" | sed -e 's/\s\+/,/g' | sed 's/^/,Disk_Used (%)/' | sed 's/^/,'${1}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> csv/formatted/Capa-Oracle
+        echo "${returnedDiskInfo}" | sed -e 's/\s\+/,/g' | sed 's/^/,Disk_Used (%)/' | sed 's/^/,'${1}','${returnedClusterName}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> csv/formatted/Capa-Oracle
       fi
 
       # Echo "plan d'action"
-      echo "$(date +"%Y-%m-%d") ,${1},$(echo $_hostname),Plan_Action" >> csv/formatted/Capa-Oracle
+      echo "$(date +"%Y-%m-%d") ,${1},${returnedClusterName},$(echo $_hostname),Plan_Action" >> csv/formatted/Capa-Oracle
 
       #Increment counter
       ((doneLines=doneLines+1))
