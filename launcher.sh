@@ -19,6 +19,8 @@ export https_proxy="http://127.0.0.1:9000"
 #-----------------------------------------------------------------------------------#
 #Cleaning before starting
 rm csv/formatted/*
+rm csv/raw-clusters/*
+rm csv/*.csv
 
 #Call bash script to export hostnames of postgresql servers from Temboard database
 echo "Getting hostnames from Temboard..."
@@ -42,10 +44,20 @@ echo
 ./hostnames_export/oracle_db-hostname_exporter.sh
 echo
 
-#Call bash script to export Oracle data to CSV via SQL request
+#Call bash script to export Oracle data for all servers to CSV via SQL request
 echo
 source oracle-data_export/oracle-data_exporter.sh
-echo "Getting data from Oracle..."
+echo "Getting Servers Infos from Oracle..."
+echo
+oracleExport "rec"
+oracleExport "dev"
+oracleExport "prod"
+echo
+
+#Call bash script to export Oracle data for clusters only to CSV via SQL request
+echo
+source oracle-data_export/oracle-clusters_exporter.sh
+echo "Getting Cluster Infos from Oracle..."
 echo
 oracleExport "rec"
 oracleExport "dev"
@@ -55,6 +67,7 @@ echo
 #Create Header files before sending data
 echo "Date,Zone,Cible,Etiquette,Valeur" > csv/header/Capa-Postgre.csv
 echo "Date,Zone,Cluster,Cible,Etiquette,Valeur" > csv/header/Capa-Oracle.csv
+echo "Date,Zone,Cluster,Etiquette,Valeur" > csv/header/Capa-Clusters-Oracle.csv
 
 #Call python script to write csv data to google spreadsheet
 echo

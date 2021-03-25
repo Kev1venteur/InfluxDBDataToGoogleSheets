@@ -13,11 +13,10 @@ function oracleExport() {
       sqlclusterName=$(envsubst < oracle-data_export/oracle-query-clusterName.sql)
       sqlram=$(envsubst < oracle-data_export/oracle-query-ram.sql)
       sqlcpu=$(envsubst < oracle-data_export/oracle-query-cpu.sql)
-      sqlDGData=$(envsubst < oracle-data_export/oracle-query-dgData.sql)
-      sqlDGReco=$(envsubst < oracle-data_export/oracle-query-dgReco.sql)
 
       # If sqlplus is not installed, then exit
-      if ! command -v oracle-data_export/instantclient_19_6/sqlplus.exe > /dev/null; then
+      if ! command -v oracle-data_export/instantclient_19_6/sqlplus.exe > /dev/null; 
+      then
         echo "L'executable SQLPlus 'oracle-data_export/instantclient_19_6/sqlplus.exe' est nécessaire pour exécuter ce script..."
         exit 1
       fi
@@ -28,7 +27,7 @@ function oracleExport() {
       oracle-data_export/instantclient_19_6/sqlplus.exe -S -L \
       "${ORACLE_USERNAME}/${ORACLE_PASSWORD}@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=${ORACLE_HOST})(PORT=${ORACLE_PORT}))(CONNECT_DATA=(SERVICE_NAME=${ORACLE_DATABASE})))")
 
-      #If no info of CPU size returned, print message and null value, else format result and put in formatted
+      #If no info of CPU size returned, print message and set value as "Null", else format result and put in formatted
       if [ -z "$returnedClusterName" ]
       then  
         returnedClusterName="Null"
@@ -40,7 +39,7 @@ function oracleExport() {
       oracle-data_export/instantclient_19_6/sqlplus.exe -S -L \
       "${ORACLE_USERNAME}/${ORACLE_PASSWORD}@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=${ORACLE_HOST})(PORT=${ORACLE_PORT}))(CONNECT_DATA=(SERVICE_NAME=${ORACLE_DATABASE})))")
 
-      #If no info of CPU size returned, print message and null value, else format result and put in formatted
+      #If no info of CPU size returned, print message and set value as "Null", else format result and put in formatted
       if [ -z "$returnedCPUInfo" ]
       then  
         echo ",Null" | sed -e 's/\s\+/,/g' | sed 's/^/,CPU_Used (%)/' | sed 's/^/,'${1}','${returnedClusterName}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> ${formattedCSVPath}
@@ -59,33 +58,36 @@ function oracleExport() {
       else
         echo "${returnedRAMInfo}" | sed -e 's/\s\+/,/g' | sed 's/^/,Ram_Used (%)/' | sed 's/^/,'${1}','${returnedClusterName}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> ${formattedCSVPath}
       fi
-
-      #Disk Group Data Request
-      returnedDGDataInfo=$(echo -e "SET PAGESIZE 0\n SET FEEDBACK OFF\n ${sqlDGData}" | \
-      oracle-data_export/instantclient_19_6/sqlplus.exe -S -L \
-      "${ORACLE_USERNAME}/${ORACLE_PASSWORD}@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=${ORACLE_HOST})(PORT=${ORACLE_PORT}))(CONNECT_DATA=(SERVICE_NAME=${ORACLE_DATABASE})))")
-
-      if [ -z "$returnedDGDataInfo" ]
-      then 
-        echo ",Null" | sed -e 's/\s\+/,/g' | sed 's/^/,DGData_Used (%)/' | sed 's/^/,'${1}','${returnedClusterName}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> ${formattedCSVPath}
-      else
-        echo "${returnedDGDataInfo}" | sed -e 's/\s\+/,/g' | sed 's/^/,DGData_Used (%)/' | sed 's/^/,'${1}','${returnedClusterName}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> ${formattedCSVPath}
-      fi
-
-      #Disk Group Reco Request
-      returnedDGRecoInfo=$(echo -e "SET PAGESIZE 0\n SET FEEDBACK OFF\n ${sqlDGReco}" | \
-      oracle-data_export/instantclient_19_6/sqlplus.exe -S -L \
-      "${ORACLE_USERNAME}/${ORACLE_PASSWORD}@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=${ORACLE_HOST})(PORT=${ORACLE_PORT}))(CONNECT_DATA=(SERVICE_NAME=${ORACLE_DATABASE})))")
       
-      if [ -z "$returnedDGRecoInfo" ]
-      then 
-        echo ",Null" | sed -e 's/\s\+/,/g' | sed 's/^/,DGReco_Used (%)/' | sed 's/^/,'${1}','${returnedClusterName}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> ${formattedCSVPath}
-      else
-        echo "${returnedDGRecoInfo}" | sed -e 's/\s\+/,/g' | sed 's/^/,DGReco_Used (%)/' | sed 's/^/,'${1}','${returnedClusterName}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> ${formattedCSVPath}
-      fi
-
       # Echo "plan d'action"
       echo "$(date +"%Y-%m-%d") ,${1},${returnedClusterName},$(echo $_hostname),Plan_Action" >> ${formattedCSVPath}
+
+      #Export corresonding cluster raw data in files to be used for cluster export script
+      if [[ "${returnedClusterName}" != "Null" ]]
+      then
+        if [[ "${1}" == "Recette" ]]
+        then
+            echo "$returnedClusterName" >> "csv/rec-oracle-clusters.csv"
+
+        elif [[ "${1}" == "Production" ]]
+        then
+            echo "$returnedClusterName" >> "csv/prod-oracle-clusters.csv"
+
+        elif [[ "${1}" == "Developpement" ]]
+        then
+            echo "$returnedClusterName" >> "csv/dev-oracle-clusters.csv"
+        fi
+
+        if [[ -n "${returnedCPUInfo}" ]]
+        then
+          echo "$returnedCPUInfo" >> "csv/raw-clusters/${returnedClusterName}-cpu"
+        fi
+
+        if [[ -n "${returnedRAMInfo}" ]]
+        then
+          echo "$returnedRAMInfo" >> "csv/raw-clusters/${returnedClusterName}-ram"
+        fi
+      fi
 
       #Increment counter
       ((doneLines=doneLines+1))
@@ -105,7 +107,7 @@ function oracleExport() {
     csvHostnamesPath="csv/rec-oracle-hostnames.csv"
     formattedCSVPath="csv/formatted/Capa-Oracle"
     echo
-    echo "Oracle rec export..."
+    echo "Oracle rec servers export..."
     echo
     launchExport "Recette"
 
@@ -115,7 +117,7 @@ function oracleExport() {
     csvHostnamesPath="csv/prod-oracle-hostnames.csv"
     formattedCSVPath="csv/formatted/Capa-Oracle"
     echo
-    echo "Oracle prod export..."
+    echo "Oracle prod servers export..."
     echo
     launchExport "Production"
 
@@ -125,7 +127,7 @@ function oracleExport() {
     csvHostnamesPath="csv/dev-oracle-hostnames.csv"
     formattedCSVPath="csv/formatted/Capa-Oracle"
     echo
-    echo "Oracle dev export..."
+    echo "Oracle dev servers export..."
     echo
     launchExport "Developpement"
 

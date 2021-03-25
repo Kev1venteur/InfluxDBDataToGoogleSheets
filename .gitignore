@@ -5,5 +5,6 @@
 *.pickle
 *.cookie
 csv/formatted/*
+csv/raw-clusters/*
 csv/header/*
 csv/*.csv
