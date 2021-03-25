@@ -32,8 +32,8 @@ source influx-data_export/influxdb-data_exporter.sh
 echo "Getting data from InfluxDB..."
 echo
 influxExport "rec"
-influxExport "prod"
 influxExport "dev"
+influxExport "prod"
 echo
 
 #Call bash script to export hostnames of oracle servers from CloudControl database
@@ -47,9 +47,9 @@ echo
 source oracle-data_export/oracle-data_exporter.sh
 echo "Getting data from Oracle..."
 echo
-oracleExport "prod"
 oracleExport "rec"
 oracleExport "dev"
+oracleExport "prod"
 echo
 
 #Create Header files before sending data
