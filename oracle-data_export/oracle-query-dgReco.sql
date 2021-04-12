@@ -1,7 +1,7 @@
 -- This file must end in a new line.
 --DiskGroup Usage of DATA diskgroup
 --valeur la plus élevée
-select MAX(MAX_VALUE)
+select round(MAX(MAX_VALUE))
 from sysman.gc${dollar}metric_values_daily
 where metric_group_name = 'DiskGroup_Usage'
 and metric_column_label = 'Disk Group Used %'
