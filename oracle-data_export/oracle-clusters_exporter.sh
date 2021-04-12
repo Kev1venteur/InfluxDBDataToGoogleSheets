@@ -68,7 +68,7 @@ function oracleExport() {
 
       if [ -z "$returnedDGDataInfo" ]
       then 
-        echo ",Null" | sed -e 's/\s\+/,/g' | sed 's/^/,DGData_Used (%)/' | sed 's/^/,'${1}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> ${formattedCSVPath}
+        echo ",Null" | sed -e 's/\s\+/,/g' | sed 's/^/,DGData_AVG2DaysUsed (%)/' | sed 's/^/,'${1}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> ${formattedCSVPath}
       else
         echo "${returnedDGDataInfo}" | sed -e 's/\s\+/,/g' | sed 's/^/,DGData_AVG2DaysUsed (%)/' | sed 's/^/,'${1}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> ${formattedCSVPath}
       fi
@@ -80,7 +80,7 @@ function oracleExport() {
       
       if [ -z "$returnedDGRecoInfo" ]
       then 
-        echo ",Null" | sed -e 's/\s\+/,/g' | sed 's/^/,DGReco_Used (%)/' | sed 's/^/,'${1}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> ${formattedCSVPath}
+        echo ",Null" | sed -e 's/\s\+/,/g' | sed 's/^/,DGReco_MaxMonthUsed (%)/' | sed 's/^/,'${1}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> ${formattedCSVPath}
       else
         echo "${returnedDGRecoInfo}" | sed -e 's/\s\+/,/g' | sed 's/^/,DGReco_MaxMonthUsed (%)/' | sed 's/^/,'${1}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> ${formattedCSVPath}
       fi
