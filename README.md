@@ -21,6 +21,9 @@ git clone https://github.com/Kev1venteur/InfluxDBDataToGoogleSheets.git
 :pencil2: Edit your Sheets ID in [this file](send-csv_google-sheets.py#L9). </br></br>
 :pencil2: If you have a proxy, refer to [this file](launcher.sh#L7). </br>
 
+## How to set Credentials
+![alt text](credentials/Credentials-Help.png)
+
 ## How to set environment
 :pushpin: Install the Google Client Library with pip:
 ``` sh
