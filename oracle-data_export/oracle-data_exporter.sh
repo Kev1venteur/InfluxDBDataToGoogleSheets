@@ -13,6 +13,7 @@ function oracleExport() {
       sqlclusterName=$(envsubst < oracle-data_export/oracle-query-clusterName.sql)
       sqlram=$(envsubst < oracle-data_export/oracle-query-ram.sql)
       sqlcpu=$(envsubst < oracle-data_export/oracle-query-cpu.sql)
+      sqlAvail=$(envsubst < oracle-data_export/oracle-query-hostAvailability.sql)
 
       # If sqlplus is not installed, then exit
       if ! command -v oracle-data_export/instantclient_19_6/sqlplus.exe > /dev/null; 
@@ -42,9 +43,9 @@ function oracleExport() {
       #If no info of CPU size returned, print message and set value as "Null", else format result and put in formatted
       if [ -z "$returnedCPUInfo" ]
       then  
-        echo ",Null" | sed -e 's/\s\+/,/g' | sed 's/^/,CPU_Used (%)/' | sed 's/^/,'${1}','${returnedClusterName}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> ${formattedCSVPath}
+        echo ",Null" | sed -e 's/\s\+/,/g' | sed 's/^/,AVG-CPU_Used-LastMonth (%)/' | sed 's/^/,'${1}','${returnedClusterName}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> ${formattedCSVPath}
       else
-        echo "${returnedCPUInfo}" | sed -e 's/\s\+/,/g' | sed 's/^/,CPU_Used (%)/' | sed 's/^/,'${1}','${returnedClusterName}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> ${formattedCSVPath}
+        echo "${returnedCPUInfo}" | sed -e 's/\s\+/,/g' | sed 's/^/,AVG-CPU_Used-LastMonth (%)/' | sed 's/^/,'${1}','${returnedClusterName}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> ${formattedCSVPath}
       fi
 
       #RAM Request
@@ -54,9 +55,21 @@ function oracleExport() {
       
       if [ -z "$returnedRAMInfo" ]
       then  
-        echo ",Null" | sed -e 's/\s\+/,/g' | sed 's/^/,Ram_Used (%)/' | sed 's/^/,'${1}','${returnedClusterName}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> ${formattedCSVPath}
+        echo ",Null" | sed -e 's/\s\+/,/g' | sed 's/^/,AVG-RAM_Used-LastMonth (%)/' | sed 's/^/,'${1}','${returnedClusterName}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> ${formattedCSVPath}
       else
-        echo "${returnedRAMInfo}" | sed -e 's/\s\+/,/g' | sed 's/^/,Ram_Used (%)/' | sed 's/^/,'${1}','${returnedClusterName}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> ${formattedCSVPath}
+        echo "${returnedRAMInfo}" | sed -e 's/\s\+/,/g' | sed 's/^/,AVG-RAM_Used-LastMonth (%)/' | sed 's/^/,'${1}','${returnedClusterName}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> ${formattedCSVPath}
+      fi
+
+      #Availability Request
+      returnedAvailInfo=$(echo -e "SET PAGESIZE 0\n SET FEEDBACK OFF\n ${sqlAvail}" | \
+      oracle-data_export/instantclient_19_6/sqlplus.exe -S -L \
+      "${ORACLE_USERNAME}/${ORACLE_PASSWORD}@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=${ORACLE_HOST})(PORT=${ORACLE_PORT}))(CONNECT_DATA=(SERVICE_NAME=${ORACLE_DATABASE})))" | sed 's/,/\./')
+
+      if [ -z "$returnedAvailInfo" ]
+      then  
+        echo ",Null" | sed -e 's/\s\+/,/g' | sed 's/^/,LastMonthAvailability (%)/' | sed 's/^/,'${1}','${returnedClusterName}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> ${formattedCSVPath}
+      else
+        echo "${returnedAvailInfo}" | sed -e 's/\s\+/,/g' | sed 's/^/,LastMonthAvailability (%)/' | sed 's/^/,'${1}','${returnedClusterName}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> ${formattedCSVPath}
       fi
       
       # Echo "plan d'action"

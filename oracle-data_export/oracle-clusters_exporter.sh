@@ -19,6 +19,7 @@ function oracleExport() {
       export dollar='$'
       sqlDGData=$(envsubst < oracle-data_export/oracle-query-dgData.sql)
       sqlDGReco=$(envsubst < oracle-data_export/oracle-query-dgReco.sql)
+      sqlAvail=$(envsubst < oracle-data_export/oracle-query-clusterAvailability.sql)
 
       # If sqlplus is not installed, then exit
       if ! command -v oracle-data_export/instantclient_19_6/sqlplus.exe > /dev/null; then
@@ -42,7 +43,7 @@ function oracleExport() {
           counter=$(($counter + 1))
         done < "csv/raw-clusters/${_hostname}-cpu"
         finalCpuValue=$(($somme / $counter))
-        echo "${finalCpuValue}" | sed -e 's/\s\+/,/g' | sed 's/^/,AVG-CPU_Used (%),/' | sed 's/^/,'${1}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> ${formattedCSVPath}
+        echo "${finalCpuValue}" | sed -e 's/\s\+/,/g' | sed 's/^/,AVG-CPU_Used-LastMonth (%),/' | sed 's/^/,'${1}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> ${formattedCSVPath}
       fi
 
       #RAM calc part from exported oracle data
@@ -58,7 +59,7 @@ function oracleExport() {
           counter=$(($counter + 1))
         done < "csv/raw-clusters/${_hostname}-ram"
         finalRamValue=$(($somme / $counter))
-        echo "${finalRamValue}" | sed -e 's/\s\+/,/g' | sed 's/^/,AVG-RAM_Used (%),/' | sed 's/^/,'${1}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> ${formattedCSVPath}
+        echo "${finalRamValue}" | sed -e 's/\s\+/,/g' | sed 's/^/,AVG-RAM_Used-LastMonth (%),/' | sed 's/^/,'${1}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> ${formattedCSVPath}
       fi
 
       #Disk Group Data Request
@@ -68,9 +69,9 @@ function oracleExport() {
 
       if [ -z "$returnedDGDataInfo" ]
       then 
-        echo ",Null" | sed -e 's/\s\+/,/g' | sed 's/^/,DGData_AVG2DaysUsed (%)/' | sed 's/^/,'${1}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> ${formattedCSVPath}
+        echo ",Null" | sed -e 's/\s\+/,/g' | sed 's/^/,DGData_AVGLast2DaysUsed (%)/' | sed 's/^/,'${1}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> ${formattedCSVPath}
       else
-        echo "${returnedDGDataInfo}" | sed -e 's/\s\+/,/g' | sed 's/^/,DGData_AVG2DaysUsed (%)/' | sed 's/^/,'${1}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> ${formattedCSVPath}
+        echo "${returnedDGDataInfo}" | sed -e 's/\s\+/,/g' | sed 's/^/,DGData_AVGLast2DaysUsed (%)/' | sed 's/^/,'${1}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> ${formattedCSVPath}
       fi
 
       #Disk Group Reco Request
@@ -80,9 +81,21 @@ function oracleExport() {
       
       if [ -z "$returnedDGRecoInfo" ]
       then 
-        echo ",Null" | sed -e 's/\s\+/,/g' | sed 's/^/,DGReco_MaxMonthUsed (%)/' | sed 's/^/,'${1}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> ${formattedCSVPath}
+        echo ",Null" | sed -e 's/\s\+/,/g' | sed 's/^/,DGReco_MaxLastMonthUsed (%)/' | sed 's/^/,'${1}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> ${formattedCSVPath}
       else
-        echo "${returnedDGRecoInfo}" | sed -e 's/\s\+/,/g' | sed 's/^/,DGReco_MaxMonthUsed (%)/' | sed 's/^/,'${1}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> ${formattedCSVPath}
+        echo "${returnedDGRecoInfo}" | sed -e 's/\s\+/,/g' | sed 's/^/,DGReco_MaxLastMonthUsed (%)/' | sed 's/^/,'${1}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> ${formattedCSVPath}
+      fi
+
+      #Availability Request
+      returnedAvailInfo=$(echo -e "SET PAGESIZE 0\n SET FEEDBACK OFF\n ${sqlAvail}" | \
+      oracle-data_export/instantclient_19_6/sqlplus.exe -S -L \
+      "${ORACLE_USERNAME}/${ORACLE_PASSWORD}@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=${ORACLE_HOST})(PORT=${ORACLE_PORT}))(CONNECT_DATA=(SERVICE_NAME=${ORACLE_DATABASE})))" | sed 's/,/\./')
+      
+      if [ -z "$returnedAvailInfo" ]
+      then 
+        echo ",Null" | sed -e 's/\s\+/,/g' | sed 's/^/,LastMonthAvailability (%)/' | sed 's/^/,'${1}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> ${formattedCSVPath}
+      else
+        echo "${returnedAvailInfo}" | sed -e 's/\s\+/,/g' | sed 's/^/,LastMonthAvailability (%)/' | sed 's/^/,'${1}','$(echo $_hostname)'/' | xargs -d"\n" -I {} date +"%Y-%m-%d {}" >> ${formattedCSVPath}
       fi
 
       # Echo "plan d'action"
