@@ -8,7 +8,7 @@
 #If you have a proxy uncomment this block of lines, and put your proxy cert renamed as
 #"cacert.pem" in the credentials folder
 #Getting cert path location
-cert_path=$(python.exe locate-cert-path.py)
+cert_path=$(python locate-cert-path.py)
 #Replacing Certifi cert with credentials/cacert.pem
 yes | cp credentials/cacert.pem $cert_path
 #Setting python env variable to use cert for proxy
