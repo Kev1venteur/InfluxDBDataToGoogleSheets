@@ -25,10 +25,18 @@ git clone https://github.com/Kev1venteur/InfluxDBDataToGoogleSheets.git
 ![alt text](credentials/Credentials-Help.png)
 
 ## How to set environment
-:pushpin: Install the Google Client Library with pip:
+:pushpin: On Linux -- Install needed tools and set aliases :
+``` sh
+sudo apt-get -y install postgresql postgresql-contrib python3 python3-pip curl gettext
+```
+
+:pushpin: On Windows -- Install [Python](https://www.python.org/downloads/) (Tested version 3.9.1 !!!Do not install from MSStore) & Install [Git Bash](https://gitforwindows.org/) (Tested version 2.31.1).
+
+:pushpin: On Linux & Windows Install the Google Client Library with pip:
 ``` sh
 pip install --trusted-host pypi.python.org --trusted-host files.pythonhosted.org --trusted-host pypi.org --upgrade requests-toolbelt google-api-python-client google-auth-httplib2 google-auth-oauthlib gspread certifi urllib3
 ```
+
 :pushpin: Create a project and turn on the Google Sheets API from this [page](https://developers.google.com/sheets/api/quickstart/python). (only use the button of the step 1) </br></br>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :point_right: In resulting dialog you DO NOT NEED to download client configuration.json</br></br>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :point_right: Now that you have created the project and activated the SPREADSHEET API, you need to enable the DRIVE one. (to work with gspread)</br></br>
@@ -40,7 +48,7 @@ pip install --trusted-host pypi.python.org --trusted-host files.pythonhosted.org
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :point_right: On the service account create a KEY at json format and download it.</br></br>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :point_right: Rename your key as "service.json" and put it in the "credentials" folder of the project.</br></br>
 :pushpin: Share your spreadsheet with the service account email as editor.</br></br>
-:pushpin: Install [Python](https://www.python.org/downloads/) (Tested version 3.9.1) and execute [The Launcher bash script](launcher.sh). </br>
+:pushpin: Execute [The Launcher bash script](launcher.sh) (In Git Bash for Windows).</br></br>
 
 ## Examples
 Environment: Using InfluxDB Docker container as datasource
