@@ -1,8 +1,8 @@
 #!/bin/bash
 function influxExport () {
-  #Setting dates to set request timestamp
-  current_date=$(date +'%Y-%m-%d')
-  last_month_date=$(date -d "$date -1 months" +"%Y-%m-%d")
+  #Setting dates and their format to set request timestamps
+  current_date=$(date +'%Y-%m-01')
+  last_month_date=$(date -d "$date -1 months" +"%Y-%m-01")
 
   function launchExport () {
     #Count lines in CSV files to make a counter
