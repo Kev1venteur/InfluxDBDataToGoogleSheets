@@ -8,3 +8,4 @@ csv/formatted/*
 csv/raw-clusters/*
 csv/header/*
 csv/*.csv
+!.vscode/settings.json

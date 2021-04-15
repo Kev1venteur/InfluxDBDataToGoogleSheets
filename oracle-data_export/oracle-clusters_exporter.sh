@@ -21,12 +21,6 @@ function oracleExport() {
       sqlDGReco=$(envsubst < oracle-data_export/oracle-query-dgReco.sql)
       sqlAvail=$(envsubst < oracle-data_export/oracle-query-clusterAvailability.sql)
 
-      # If sqlplus is not installed, then exit
-      if ! command -v oracle-data_export/instantclient_19_6/sqlplus.exe > /dev/null; then
-        echo "L'executable SQLPlus 'oracle-data_export/instantclient_19_6/sqlplus.exe' est nécessaire pour exécuter ce script..."
-        exit 1
-      fi
-
       #CPU calc part from exported oracle data
       finalCpuValue=0
       finalRamValue=0
@@ -64,7 +58,7 @@ function oracleExport() {
 
       #Disk Group Data Request
       returnedDGDataInfo=$(echo -e "SET PAGESIZE 0\n SET FEEDBACK OFF\n ${sqlDGData}" | \
-      oracle-data_export/instantclient_19_6/sqlplus.exe -S -L \
+      ${instantClientPath} -S -L \
       "${ORACLE_USERNAME}/${ORACLE_PASSWORD}@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=${ORACLE_HOST})(PORT=${ORACLE_PORT}))(CONNECT_DATA=(SERVICE_NAME=${ORACLE_DATABASE})))")
 
       if [ -z "$returnedDGDataInfo" ]
@@ -76,7 +70,7 @@ function oracleExport() {
 
       #Disk Group Reco Request
       returnedDGRecoInfo=$(echo -e "SET PAGESIZE 0\n SET FEEDBACK OFF\n ${sqlDGReco}" | \
-      oracle-data_export/instantclient_19_6/sqlplus.exe -S -L \
+      ${instantClientPath} -S -L \
       "${ORACLE_USERNAME}/${ORACLE_PASSWORD}@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=${ORACLE_HOST})(PORT=${ORACLE_PORT}))(CONNECT_DATA=(SERVICE_NAME=${ORACLE_DATABASE})))")
       
       if [ -z "$returnedDGRecoInfo" ]
@@ -88,7 +82,7 @@ function oracleExport() {
 
       #Availability Request
       returnedAvailInfo=$(echo -e "SET PAGESIZE 0\n SET FEEDBACK OFF\n ${sqlAvail}" | \
-      oracle-data_export/instantclient_19_6/sqlplus.exe -S -L \
+      ${instantClientPath} -S -L \
       "${ORACLE_USERNAME}/${ORACLE_PASSWORD}@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=${ORACLE_HOST})(PORT=${ORACLE_PORT}))(CONNECT_DATA=(SERVICE_NAME=${ORACLE_DATABASE})))" | sed 's/,/\./')
       
       if [ -z "$returnedAvailInfo" ]
@@ -113,6 +107,19 @@ function oracleExport() {
   }
 
   #Block to set variables before code and avoid code repetition
+  if [[ "$OSTYPE" == "msys" ]]
+    then
+      #Oracle path for instant client
+      instantClientPath="oracle-data_export/winInstantClient_19_6/sqlplus.exe"
+  elif [[ "$OSTYPE" == "linux-gnu" ]]
+    then
+      #Oracle path for instant client
+      instantClientPath="sqlplus"
+  else
+      echo "OSTYPE unknown, cannot continue the script" 
+      exit
+  fi
+  
   if [[ "${1}" == "rec" ]]
   then
     source credentials/rec-oracle.env

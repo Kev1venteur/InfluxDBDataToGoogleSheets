@@ -27,7 +27,12 @@ git clone https://github.com/Kev1venteur/InfluxDBDataToGoogleSheets.git
 ## How to set environment
 :pushpin: On Linux -- Install needed tools and set aliases :
 ``` sh
-sudo apt-get -y install postgresql postgresql-contrib python3 python3-pip curl gettext
+$ sudo yum install postgresql postgresql-contrib python3 python3-pip curl gettext wget
+$ wget --no-check-certificate https://download.oracle.com/otn_software/linux/instantclient/19600/oracle-instantclient19.6-basic-19.6.0.0.0-1.x86_64.rpm
+$ sudo yum install oracle-instantclient19.6-basic-19.6.0.0.0-1.x86_64.rpm
+$ wget --no-check-certificate https://download.oracle.com/otn_software/linux/instantclient/19600/oracle-instantclient19.6-sqlplus-19.6.0.0.0-1.x86_64.rpm
+$ sudo yum install oracle-instantclient19.6-sqlplus-19.6.0.0.0-1.x86_64.rpm
+$ echo "alias pip='pip3'" >> $HOME/.bashrc && source $HOME/.bashrc
 ```
 
 :pushpin: On Windows -- Install [Python](https://www.python.org/downloads/) (Tested version 3.9.1 !!!Do not install from MSStore) & Install [Git Bash](https://gitforwindows.org/) (Tested version 2.31.1).

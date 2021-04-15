@@ -15,17 +15,10 @@ function oracleExport() {
       sqlcpu=$(envsubst < oracle-data_export/oracle-query-cpu.sql)
       sqlAvail=$(envsubst < oracle-data_export/oracle-query-hostAvailability.sql)
 
-      # If sqlplus is not installed, then exit
-      if ! command -v oracle-data_export/instantclient_19_6/sqlplus.exe > /dev/null; 
-      then
-        echo "L'executable SQLPlus 'oracle-data_export/instantclient_19_6/sqlplus.exe' est nécessaire pour exécuter ce script..."
-        exit 1
-      fi
-
       # Connect to the database, run the query, then disconnect
       #Cluster Name Request
       returnedClusterName=$(echo -e "SET PAGESIZE 0\n SET FEEDBACK OFF\n ${sqlclusterName}" | \
-      oracle-data_export/instantclient_19_6/sqlplus.exe -S -L \
+      ${instantClientPath} -S -L \
       "${ORACLE_USERNAME}/${ORACLE_PASSWORD}@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=${ORACLE_HOST})(PORT=${ORACLE_PORT}))(CONNECT_DATA=(SERVICE_NAME=${ORACLE_DATABASE})))")
 
       #If no info of CPU size returned, print message and set value as "Null", else format result and put in formatted
@@ -37,7 +30,7 @@ function oracleExport() {
       # Connect to the database, run the query, then disconnect
       #CPU Request
       returnedCPUInfo=$(echo -e "SET PAGESIZE 0\n SET FEEDBACK OFF\n ${sqlcpu}" | \
-      oracle-data_export/instantclient_19_6/sqlplus.exe -S -L \
+      ${instantClientPath} -S -L \
       "${ORACLE_USERNAME}/${ORACLE_PASSWORD}@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=${ORACLE_HOST})(PORT=${ORACLE_PORT}))(CONNECT_DATA=(SERVICE_NAME=${ORACLE_DATABASE})))")
 
       #If no info of CPU size returned, print message and set value as "Null", else format result and put in formatted
@@ -50,7 +43,7 @@ function oracleExport() {
 
       #RAM Request
       returnedRAMInfo=$(echo -e "SET PAGESIZE 0\n SET FEEDBACK OFF\n ${sqlram}" | \
-      oracle-data_export/instantclient_19_6/sqlplus.exe -S -L \
+      ${instantClientPath} -S -L \
       "${ORACLE_USERNAME}/${ORACLE_PASSWORD}@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=${ORACLE_HOST})(PORT=${ORACLE_PORT}))(CONNECT_DATA=(SERVICE_NAME=${ORACLE_DATABASE})))")
       
       if [ -z "$returnedRAMInfo" ]
@@ -62,7 +55,7 @@ function oracleExport() {
 
       #Availability Request
       returnedAvailInfo=$(echo -e "SET PAGESIZE 0\n SET FEEDBACK OFF\n ${sqlAvail}" | \
-      oracle-data_export/instantclient_19_6/sqlplus.exe -S -L \
+      ${instantClientPath} -S -L \
       "${ORACLE_USERNAME}/${ORACLE_PASSWORD}@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=${ORACLE_HOST})(PORT=${ORACLE_PORT}))(CONNECT_DATA=(SERVICE_NAME=${ORACLE_DATABASE})))" | sed 's/,/\./')
 
       if [ -z "$returnedAvailInfo" ]
@@ -114,6 +107,19 @@ function oracleExport() {
   }
 
   #Block to set variables before code and avoid code repetition
+  if [[ "$OSTYPE" == "msys" ]]
+    then
+      #Oracle path for instant client
+      instantClientPath="oracle-data_export/winInstantClient_19_6/sqlplus.exe"
+  elif [[ "$OSTYPE" == "linux-gnu" ]]
+    then
+      #Oracle path for instant client
+      instantClientPath="sqlplus"
+  else
+      echo "OSTYPE unknown, cannot continue the script" 
+      exit
+  fi
+
   if [[ "${1}" == "rec" ]]
   then
     source credentials/rec-oracle.env
