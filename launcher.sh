@@ -5,10 +5,21 @@
 #connection.
 #-----------------------------------------------------------------------------------#
 #----------------------------------PROXY--------------------------------------------#
-#If you have a proxy uncomment this block of lines, and put your proxy cert renamed as
-#"cacert.pem" in the credentials folder
+#If you have a proxy, uncomment this block of lines, and put your proxy cert 
+#renamed as "cacert.pem" in the credentials folder
 #Getting cert path location
-cert_path=$(python locate-cert-path.py)
+if [[ "$OSTYPE" == "msys" ]]
+  then
+    #Python for windows and git bash
+    cert_path=$(python locate-cert-path.py)
+elif [[ "$OSTYPE" == "linux-gnu" ]]
+  then
+    #Python for linux
+    cert_path=$(python3 locate-cert-path.py)
+else
+    echo "OSTYPE unknown, cannot continue the script" 
+    exit
+fi
 #Replacing Certifi cert with credentials/cacert.pem
 yes | cp credentials/cacert.pem $cert_path
 #Setting python env variable to use cert for proxy
@@ -17,6 +28,7 @@ export REQUESTS_CA_BUNDLE=credentials/cacert.pem && echo "Set proxy cert." && ec
 export http_proxy="http://127.0.0.1:9000"
 export https_proxy="http://127.0.0.1:9000"
 #-----------------------------------------------------------------------------------#
+
 #Cleaning before starting
 rm csv/formatted/*
 rm csv/raw-clusters/*
@@ -72,7 +84,18 @@ echo "Date,Zone,Cluster,Etiquette,Valeur" > csv/header/Capa-Clusters-Oracle.csv
 #Call python script to write csv data to google spreadsheet
 echo
 echo "Sending all data to Google Sheets..."
-./loading-animation.sh python send-csv_google-sheets.py
+if [[ "$OSTYPE" == "msys" ]]
+  then
+    #Python for windows and git bash
+    ./loading-animation.sh python send-csv_google-sheets.py
+elif [[ "$OSTYPE" == "linux-gnu" ]]
+  then
+    #Python for linux
+    ./loading-animation.sh python3 send-csv_google-sheets.py
+else
+    echo "OSTYPE unknown, cannot continue the script" 
+    exit
+fi
 
 #Pause to see the terminal log
 echo
