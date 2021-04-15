@@ -10,29 +10,29 @@ function influxExport () {
     doneLines=0
 
     #Foreach rec hostname, getting data from influxdb directly into separated CSV format
-    cat $csvHostnamesPath | while read hostname
+    cat $csvHostnamesPath | while read _hostname
     do
       #Calling InfluxDB API for CPU (can be executed in one request CPU + RAM, but in two the post-process is faster)
       RAWInfluxCPU=$(curl -sS -G $influxURL\
             --data-urlencode "u=$influxuser"\
             --data-urlencode "p=$influxpass"\
             --data-urlencode "db=metrologie"\
-            --data-urlencode "q=SELECT MEAN(\"cpu_idle\") FROM \"syst-metro-linux-cpu\" WHERE \"host\"=~/"$hostname"/ AND \"time\">'"$last_month_date"' AND \"time\"<'"$current_date"'"\
+            --data-urlencode "q=SELECT MEAN(\"cpu_idle\") FROM \"syst-metro-linux-cpu\" WHERE \"host\"=~/"$_hostname"/ AND \"time\">'"$last_month_date"' AND \"time\"<'"$current_date"'"\
             -H "Accept: application/csv")
 
       #If no info of CPU size returned, print message and null value, else format result and put in formatted
       if [ -z "$RAWInfluxCPU" ]
       then
-        echo "Null" | sed 's/^/'"$current_date"','$1','"$hostname"',CPU_Used (%),/' >> ${formattedCSVPath}
+        echo "Null" | sed 's/^/'"$current_date"','$1','"$_hostname"',CPU_Used (%),/' >> ${formattedCSVPath}
       else
         #CPU formatting and calculation
         float=$(echo "${RAWInfluxCPU}" | sed -e '1d' | cut -d , -f4)
         #Operation to get used CPU and not free CPU
         #Convert float to int
-        int=${float%.*}
-        influxCPU=$((100 - $int))
+        rInt=${float%.*}
+        influxCPU=$((100 - $rInt))
         #Formatting for sheet and putting into formatted file
-        echo "${influxCPU}" | sed 's/^/'"$current_date"','$1','"$hostname"',CPU_Used (%),/' >> ${formattedCSVPath}
+        echo "${influxCPU}" | sed 's/^/'"$current_date"','$1','"$_hostname"',CPU_Used (%),/' >> ${formattedCSVPath}
       fi
 
       #Calling InfluxDB API for Memory
@@ -40,13 +40,13 @@ function influxExport () {
             --data-urlencode "u=$influxuser"\
             --data-urlencode "p=$influxpass"\
             --data-urlencode "db=metrologie"\
-            --data-urlencode "q=SELECT MEAN(\"MemAvailable\"),MEAN(\"MemTotal\") FROM \"syst-metro-linux-mem\" WHERE \"host\"=~/"$hostname"/ AND \"time\">'"$last_month_date"' AND \"time\"<'"$current_date"'"\
+            --data-urlencode "q=SELECT MEAN(\"MemAvailable\"),MEAN(\"MemTotal\") FROM \"syst-metro-linux-mem\" WHERE \"host\"=~/"$_hostname"/ AND \"time\">'"$last_month_date"' AND \"time\"<'"$current_date"'"\
             -H "Accept: application/csv")
 
       #Check if variable is empty
       if [ -z "$RAWInfluxRAM" ]
       then
-        echo "Null" | sed 's/^/'"$current_date"','$1','"$hostname"',RAM_Used (%),/' >> ${formattedCSVPath}
+        echo "Null" | sed 's/^/'"$current_date"','$1','"$_hostname"',RAM_Used (%),/' >> ${formattedCSVPath}
       else
         #Ram formating and calculation
         mem_free=$(echo "${RAWInfluxRAM}" | sed -e '1d' | cut -d , -f4)
@@ -55,7 +55,7 @@ function influxExport () {
         mem_total=${mem_total%.*}
         mem_used=$(($mem_total - $mem_free))
         influxRAM=$(($mem_used * 100 / $mem_total))
-        echo "${influxRAM}" | sed 's/^/'"$current_date"','$1','"$hostname"',RAM_Used (%),/' >> ${formattedCSVPath}
+        echo "${influxRAM}" | sed 's/^/'"$current_date"','$1','"$_hostname"',RAM_Used (%),/' >> ${formattedCSVPath}
       fi
 
       #Calling InfluxDB API for Volume Group
@@ -63,32 +63,32 @@ function influxExport () {
             --data-urlencode "u=$influxuser"\
             --data-urlencode "p=$influxpass"\
             --data-urlencode "db=metrologie"\
-            --data-urlencode "q=SELECT ROUND(MEAN(\"_u01_%\")) FROM \"disk-gen-full-_u01\" WHERE \"host\"=~/"$hostname"/ AND \"time\">'"$last_month_date"' AND \"time\"<'"$current_date"'"\
+            --data-urlencode "q=SELECT ROUND(MEAN(\"_u01_%\")) FROM \"disk-gen-full-_u01\" WHERE \"host\"=~/"$_hostname"/ AND \"time\">'"$last_month_date"' AND \"time\"<'"$current_date"'"\
             -H "Accept: application/csv")
 
       #Check if variable is empty
       if [ -z "$RAWInfluxDisk" ]
       then
-        echo "Null" | sed 's/^/'"$current_date"','$1','"$hostname"',Disk_Used_u01 (%),/' >> ${formattedCSVPath}
+        echo "Null" | sed 's/^/'"$current_date"','$1','"$_hostname"',Disk_Used_u01 (%),/' >> ${formattedCSVPath}
       else
         #Disk formating and send in CSV
         influxDisk=$(echo "${RAWInfluxDisk}" | sed -e '1d' | cut -d , -f4)
-        echo "${influxDisk}" | sed 's/^/'"$current_date"','$1','"$hostname"',Disk_Used_u01 (%),/' >> ${formattedCSVPath}
+        echo "${influxDisk}" | sed 's/^/'"$current_date"','$1','"$_hostname"',Disk_Used_u01 (%),/' >> ${formattedCSVPath}
       fi
 
       #Convert hostname to instance name (u3recuXXX to pgsrXXX)
       if [[ "$1" == "Recette" ]]
       then
         #Define hostname separation with "." get the first part, and remove the first 8 char
-        pgname=$(cat 'csv/rec-temboard-hostnames.csv' | grep "$hostname" | cut -d . -f1 | cut -c8-)".recgroupement.systeme-u.fr"
+        pgname=$(cat 'csv/rec-temboard-hostnames.csv' | grep "$_hostname" | cut -d . -f1 | cut -c8-)".recgroupement.systeme-u.fr"
 
       elif [[ "$1" == "Production" ]]
       then
-        pgname=$(cat 'csv/prod-temboard-hostnames.csv' | grep "$hostname" | cut -d . -f1 | cut -c8-)".groupement.systeme-u.fr"
+        pgname=$(cat 'csv/prod-temboard-hostnames.csv' | grep "$_hostname" | cut -d . -f1 | cut -c8-)".groupement.systeme-u.fr"
 
       elif [[ "$1" == "Developpement" ]]
       then
-        pgname=$(cat 'csv/dev-temboard-hostnames.csv' | grep "$hostname" | cut -d . -f1 | cut -c8-)".groupement.systeme-u.fr"
+        pgname=$(cat 'csv/dev-temboard-hostnames.csv' | grep "$_hostname" | cut -d . -f1 | cut -c8-)".groupement.systeme-u.fr"
 
       else
         echo "Error, no environement type (rec, dev, prod) specified, exiting..." 
@@ -112,7 +112,7 @@ function influxExport () {
       # fi
 
       # Echo "plan d'action"
-      echo ""$current_date","$1","$hostname",Plan_Action," >> ${formattedCSVPath}
+      echo ""$current_date","$1","$_hostname",Plan_Action," >> ${formattedCSVPath}
 
       #Increment counter
       ((doneLines=doneLines+1))
