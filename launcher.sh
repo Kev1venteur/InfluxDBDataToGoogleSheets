@@ -8,14 +8,15 @@
 #If you have a proxy, uncomment this block of lines, and put your proxy cert 
 #renamed as "cacert.pem" in the credentials folder
 #Getting cert path location
+export PYTHONIOENCODING=utf8
 if [[ "$OSTYPE" == "msys" ]]
   then
     #Python for windows and git bash
-    cert_path=$(python locate-cert-path.py)
+    cert_path=$(python python_tools/locate-cert-path.py)
 elif [[ "$OSTYPE" == "linux-gnu" ]]
   then
     #Python for linux
-    cert_path=$(python3 locate-cert-path.py)
+    cert_path=$(python3 python_tools/locate-cert-path.py)
 else
     echo "OSTYPE unknown, cannot continue the script" 
     exit
@@ -37,16 +38,18 @@ rm csv/*.csv
 #Call bash script to export hostnames of postgresql servers from Temboard database
 echo "Getting hostnames from Temboard..."
 echo
-./hostnames_export/temboard_db-hostnames_exporter.sh
+source hostnames_export/postgreV12-influx_db-hostname_exporter.sh
+echo "Getting PostgreV12 hostnames from InfluxDB..."
 echo
+influxExport "rec"
+influxExport "prod"
 
 #Call bash script to export InfluxDB data to CSV via HTTP API
 echo
-source influx-data_export/influxdb-data_exporter.sh
+source postgre-data_export/postgre-data_exporter.sh
 echo "Getting data from InfluxDB..."
 echo
 influxExport "rec"
-influxExport "dev"
 influxExport "prod"
 echo
 

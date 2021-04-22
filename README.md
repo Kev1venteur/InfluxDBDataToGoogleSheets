@@ -39,7 +39,7 @@ $ echo "alias pip='pip3'" >> $HOME/.bashrc && source $HOME/.bashrc
 
 :pushpin: On Linux & Windows Install the Google Client Library with pip:
 ``` sh
-pip install --trusted-host pypi.python.org --trusted-host files.pythonhosted.org --trusted-host pypi.org --upgrade requests-toolbelt google-api-python-client google-auth-httplib2 google-auth-oauthlib gspread certifi urllib3
+pip install --trusted-host pypi.python.org --trusted-host files.pythonhosted.org --trusted-host pypi.org --upgrade requests-toolbelt google-api-python-client google-auth-httplib2 google-auth-oauthlib gspread certifi urllib3 pandas openpyxl
 ```
 
 :pushpin: Create a project and turn on the Google Sheets API from this [page](https://developers.google.com/sheets/api/quickstart/python). (only use the button of the step 1) </br></br>
